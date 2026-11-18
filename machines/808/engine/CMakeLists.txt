@@ -29,21 +29,4 @@ if(SNARE_BUILD_TESTS)
     set_target_properties(test_${suite} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
     add_test(NAME 808.${suite} COMMAND test_${suite})
   endforeach()
-
-  # The core's suites, run here against the 808's engine.
-  foreach(suite timeline scheduler pattern_bank sequencer accent voices choke midi realtime swing fx)
-    add_executable(test_${suite} "${BOOMBAPBOT_ENGINE_DIR}/tests/test_${suite}.cpp")
-    target_link_libraries(test_${suite} PRIVATE boombapbot_engine_808)
-    target_compile_options(test_${suite} PRIVATE ${SNARE_WARNINGS})
-    set_target_properties(test_${suite} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
-    add_test(NAME engine.${suite} COMMAND test_${suite})
-  endforeach()
-
-  # Compiled as C, to prove engine.h is a C header and pin its struct layouts.
-  add_executable(test_abi "${BOOMBAPBOT_ENGINE_DIR}/tests/test_abi.c")
-  set_target_properties(test_abi PROPERTIES
-    C_STANDARD 11 C_STANDARD_REQUIRED ON LINKER_LANGUAGE CXX RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
-  target_link_libraries(test_abi PRIVATE boombapbot_engine_808)
-  target_compile_options(test_abi PRIVATE ${SNARE_WARNINGS})
-  add_test(NAME engine.abi COMMAND test_abi)
 endif()

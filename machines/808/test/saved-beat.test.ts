@@ -11,7 +11,7 @@ describe('loading a saved beat onto the machine', () => {
     const before = machine.store.getState().project;
 
     const loaded = machine.loadSavedBeat(JSON.parse(JSON.stringify(saved())));
-    expect(loaded?.id).toBe('from-the-account');
+    expect(loaded).toMatchObject({ adopted: false, project: { id: 'from-the-account' } });
     expect(machine.store.getState().project.name).toBe('From the account');
     expect(machine.store.getState().notice).toMatchObject({
       kind: 'info',
