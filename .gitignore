@@ -7,5 +7,9 @@ apps/host/public/engine/
 apps/host/public/faceplates/
 apps/host/public/boombapbot-assets.json
 
+# Playwright
+playwright-report/
+test-results/
+
 .DS_Store
 *.log

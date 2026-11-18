@@ -11,6 +11,8 @@
   },
   "scripts": {
     "setup:emsdk": "./core/scripts/setup-emsdk.sh",
+    "kits:generate": "python3 retired/gen_demo_kits.py",
+    "kits:check": "python3 retired/gen_demo_kits.py --check",
     "faceplates:draw": "node machines/808/art/draw-faceplate.mjs",
     "faceplates:check": "node machines/808/art/draw-faceplate.mjs --check",
     "build:engine": "./scripts/build-engine.sh",
@@ -19,12 +21,16 @@
     "dev": "node scripts/prepare-assets.mjs && pnpm --filter @tr-clones/host dev",
     "build": "node scripts/prepare-assets.mjs && pnpm --filter @tr-clones/host build",
     "preview": "pnpm --filter @tr-clones/host preview",
-    "typecheck": "tsc --noEmit -p machines/808 && tsc --noEmit -p apps/host",
-    "test": "pnpm test:engine && pnpm test:unit",
+    "typecheck": "tsc --noEmit -p machines/808 && tsc --noEmit -p apps/host && tsc --noEmit -p e2e",
+    "test": "pnpm test:engine && pnpm test:unit && pnpm test:e2e",
     "test:engine": "ctest --test-dir build/native --output-on-failure",
-    "test:unit": "vitest run"
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "bench": "node scripts/bench-engine.mjs"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.63.0",
     "@types/node": "22.20.5",
     "esbuild": "0.28.2",
     "typescript": "6.0.3",
