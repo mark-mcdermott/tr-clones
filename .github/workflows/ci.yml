@@ -79,14 +79,14 @@ jobs:
       - name: Unit tests (Vitest, against the WASM build)
         run: pnpm test:unit
 
-      - name: Build the host page
-        run: pnpm build
+      - name: Build each machine's page
+        run: pnpm build:all
 
       - name: Install Chromium for Playwright
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Browser tests (Playwright, against the built page)
-        run: pnpm test:e2e
+      - name: Browser tests (Playwright, against each built page)
+        run: pnpm test:e2e:all
 
       - name: Upload Playwright report
         if: failure()
