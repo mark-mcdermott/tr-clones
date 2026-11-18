@@ -1,0 +1,15 @@
+{
+  "extends": "../../core/tsconfig.base.json",
+  "compilerOptions": {
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "src",
+    "test",
+    "data",
+    "fixtures",
+    "../../core/packages/editor/src/assets.d.ts"
+  ]
+}

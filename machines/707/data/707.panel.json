@@ -1,0 +1,90 @@
+{
+  "format": "boombapbot.panel",
+  "schemaVersion": 1,
+  "id": "707",
+  "name": "707 panel",
+  "faceplate": {"file": "707.svg", "width": 2000, "height": 1272, "original": true},
+  "theme": {"panel": "#d6d3c9", "ink": "#3b3b40", "accent": "#e9722a", "button": "#4b4b50", "well": "#2d2e33", "led": "#ff3b22"},
+  "wells": [
+    [1000, 208, 862, 322],
+    [340, 794, 1472, 124]
+  ],
+  "power": {"hit": [150, 78, 150, 84], "slot": [178, 88, 26, 62]},
+  "display": [470, 226, 500, 284],
+  "faderCap": {"width": 40, "height": 30},
+  "faders": [
+    {"id": "accent", "label": "AC", "x": 1082, "top": 292, "bottom": 456, "hit": [1055, 264, 54, 220]},
+    {"id": "bass_drum", "label": "BD", "x": 1141.5, "top": 292, "bottom": 456, "hit": [1114.5, 264, 54, 220]},
+    {"id": "snare_drum", "label": "SD", "x": 1201, "top": 292, "bottom": 456, "hit": [1174, 264, 54, 220]},
+    {"id": "low_tom", "label": "LT", "x": 1260.5, "top": 292, "bottom": 456, "hit": [1233.5, 264, 54, 220]},
+    {"id": "mid_tom", "label": "MT", "x": 1320, "top": 292, "bottom": 456, "hit": [1293, 264, 54, 220]},
+    {"id": "hi_tom", "label": "HT", "x": 1379.5, "top": 292, "bottom": 456, "hit": [1352.5, 264, 54, 220]},
+    {"id": "rim_cowbell", "label": "RIM/COW", "x": 1439, "top": 292, "bottom": 456, "hit": [1412, 264, 54, 220]},
+    {"id": "clap_tambourine", "label": "HCP/TAMB", "x": 1498.5, "top": 292, "bottom": 456, "hit": [1471.5, 264, 54, 220]},
+    {"id": "hi_hat", "label": "HH", "x": 1558, "top": 292, "bottom": 456, "hit": [1531, 264, 54, 220]},
+    {"id": "crash", "label": "CRASH", "x": 1617.5, "top": 292, "bottom": 456, "hit": [1590.5, 264, 54, 220]},
+    {"id": "ride", "label": "RIDE", "x": 1677, "top": 292, "bottom": 456, "hit": [1650, 264, 54, 220]},
+    {"id": "volume", "label": "VOLUME", "x": 1762, "top": 292, "bottom": 456, "hit": [1735, 264, 54, 220]}
+  ],
+  "tempo": {"label": "TEMPO", "cx": 1752, "cy": 690, "r": 62, "minDeg": -140, "maxDeg": 140, "photoDeg": 0},
+  "start": {"label": "START", "hit": [234, 808, 78, 104]},
+  "stop": {"label": "STOP/CONT", "hit": [228, 660, 78, 104]},
+  "shift": {"label": "SHIFT", "hit": [244, 984, 78, 100]},
+  "enter": {"label": "ENTER", "hit": [1444, 660, 76, 102]},
+  "keys": [
+    {"key": "clear", "label": "CLEAR", "hit": [436, 674, 50, 50], "button": [438, 676, 46, 46], "second": "CLEAR"},
+    {"key": "scale", "label": "SCALE", "hit": [500, 674, 50, 50], "button": [502, 676, 46, 46], "second": "BACK"},
+    {"key": "last_step", "label": "LAST STEP", "hit": [564, 674, 50, 50], "button": [566, 676, 46, 46], "second": "FWD"},
+    {"key": "instrument", "label": "INSTRUMENT", "hit": [632, 674, 50, 50], "button": [634, 676, 46, 46], "second": "LAST MEAS"},
+    {"key": "shuffle", "label": "SHUFFLE", "hit": [722, 674, 50, 50], "button": [724, 676, 46, 46]},
+    {"key": "tempo_measure", "label": "TEMPO/MEAS", "hit": [822, 674, 50, 50], "button": [824, 676, 46, 46]},
+    {"key": "track", "label": "TRACK", "hit": [932, 674, 50, 50], "button": [934, 676, 46, 46], "second": "TRACK"},
+    {"key": "pattern", "label": "PATTERN", "hit": [992, 674, 50, 50], "button": [994, 676, 46, 46], "second": "STEP/TAP"}
+  ],
+  "groups": [
+    {"label": "A", "track": "I", "hit": [1102, 674, 50, 50], "button": [1104, 676, 46, 46], "lamp": [1104, 642, 26, 10]},
+    {"label": "B", "track": "II", "hit": [1162, 674, 50, 50], "button": [1164, 676, 46, 46], "lamp": [1164, 642, 26, 10]},
+    {"label": "C", "track": "III", "hit": [1222, 674, 50, 50], "button": [1224, 676, 46, 46], "lamp": [1224, 642, 26, 10]},
+    {"label": "D", "track": "IV", "hit": [1282, 674, 50, 50], "button": [1284, 676, 46, 46], "lamp": [1284, 642, 26, 10]}
+  ],
+  "scales": [
+    {"scale": 6, "lamp": [356, 808, 28, 10]},
+    {"scale": 3, "lamp": [356, 838, 28, 10]},
+    {"scale": 8, "lamp": [356, 868, 28, 10]},
+    {"scale": 4, "lamp": [356, 898, 28, 10]}
+  ],
+  "steps": [
+    {"hit": [384.25, 946, 87.5, 142], "button": [393, 986, 70, 98], "lamp": [395, 954, 28, 10]},
+    {"hit": [471.75, 946, 87.5, 142], "button": [480.5, 986, 70, 98], "lamp": [482.5, 954, 28, 10]},
+    {"hit": [559.25, 946, 87.5, 142], "button": [568, 986, 70, 98], "lamp": [570, 954, 28, 10]},
+    {"hit": [646.75, 946, 87.5, 142], "button": [655.5, 986, 70, 98], "lamp": [657.5, 954, 28, 10]},
+    {"hit": [734.25, 946, 87.5, 142], "button": [743, 986, 70, 98], "lamp": [745, 954, 28, 10]},
+    {"hit": [821.75, 946, 87.5, 142], "button": [830.5, 986, 70, 98], "lamp": [832.5, 954, 28, 10]},
+    {"hit": [909.25, 946, 87.5, 142], "button": [918, 986, 70, 98], "lamp": [920, 954, 28, 10]},
+    {"hit": [996.75, 946, 87.5, 142], "button": [1005.5, 986, 70, 98], "lamp": [1007.5, 954, 28, 10]},
+    {"hit": [1084.25, 946, 87.5, 142], "button": [1093, 986, 70, 98], "lamp": [1095, 954, 28, 10]},
+    {"hit": [1171.75, 946, 87.5, 142], "button": [1180.5, 986, 70, 98], "lamp": [1182.5, 954, 28, 10]},
+    {"hit": [1259.25, 946, 87.5, 142], "button": [1268, 986, 70, 98], "lamp": [1270, 954, 28, 10]},
+    {"hit": [1346.75, 946, 87.5, 142], "button": [1355.5, 986, 70, 98], "lamp": [1357.5, 954, 28, 10]},
+    {"hit": [1434.25, 946, 87.5, 142], "button": [1443, 986, 70, 98], "lamp": [1445, 954, 28, 10]},
+    {"hit": [1521.75, 946, 87.5, 142], "button": [1530.5, 986, 70, 98], "lamp": [1532.5, 954, 28, 10]},
+    {"hit": [1609.25, 946, 87.5, 142], "button": [1618, 986, 70, 98], "lamp": [1620, 954, 28, 10]},
+    {"hit": [1696.75, 946, 87.5, 142], "button": [1705.5, 986, 70, 98], "lamp": [1707.5, 954, 28, 10]}
+  ],
+  "pending": [
+    "The machine plays short recordings of drums. Here every voice is synthesised, as a model made from descriptions of its sound. Nobody has compared the voices with a real machine by ear.",
+    "The machine has 64 patterns in four groups. The engine holds 32, so there are two groups here, A and B. Keys C and D choose no group; with SHIFT they still choose tracks III and IV.",
+    "On the machine each step of the bass drum, snare drum, rim shot/cowbell and hand clap/tambourine rows can be either of the row's two sounds. Here a row plays one of them for the whole project: the one last chosen with INSTRUMENT, or last tapped.",
+    "Flam is not in the engine, so the key is lettered SHUFFLE alone. Shuffle has five settings (SHUFFLE, then step key 1 to 5), is the same for every pattern, and at its most plays as triplets. The machine's own amounts are unverified.",
+    "Accent is one row for all instruments, as on the machine. How much louder an accented step is, and how far each fader reaches, is a model.",
+    "Keys the machine wants held down (SHIFT, INSTRUMENT, LAST STEP, SHUFFLE, CLEAR) stay down by themselves here until the key that completes them is pressed. Esc lets one up.",
+    "A pattern is chosen in pattern play and can be written whether or not it runs. On the machine the step keys choose the pattern to write while it is stopped, and write steps while it runs.",
+    "A chain is made with SHIFT and the step key of its last pattern, or by pressing two step keys together on a touch screen. The page cues each next pattern as a measure begins, so a measure shorter than about a tenth of a second can play twice.",
+    "A track keeps to one pattern group, chosen with A or B while the track is written, and holds up to 192 measures. It plays once through. STOP/CONT carries on from the top of the measure it was stopped in, not from the step.",
+    "Writing a track: ENTER stores the chosen pattern and moves on, BACK and FWD step through the measures, LAST MEAS ends the track at the measure it stands on, SHIFT with INS or DEL inserts or deletes a measure, and CLEAR then ENTER empties the track. The numbers under the step keys enter a measure number on the machine and do nothing here.",
+    "COPY (SHIFT, COPY, then a step key) copies the pattern being written over another of its group, and CLEAR then a step key clears that pattern. Neither has been checked against the machine.",
+    "The order in which SCALE steps through the chart is unverified. The guide click of tap write, the cartridge, MIDI and sync are left out, and so is their lettering.",
+    "The display puts the closed and open hi-hat on one row and the crash and ride on another, as the machine does, and draws the second of each pair as an outline. What the machine's own display shows in each mode is unverified.",
+    "The tempo knob runs from 40 to 240 beats a minute; the machine's own range is unverified. Its power switch is on the back. Here it is on the panel."
+  ]
+}
