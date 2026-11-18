@@ -1,5 +1,19 @@
 {
   "extends": "../../core/tsconfig.base.json",
-  "compilerOptions": { "types": ["vite/client"] },
-  "include": ["src", "vite.config.ts"]
+  "compilerOptions": {
+    "types": [
+      "vite/client",
+      "node"
+    ],
+    "allowJs": true,
+    "paths": {
+      "#machine": [
+        "../../machines/808/src/index.tsx"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "vite.config.ts"
+  ]
 }

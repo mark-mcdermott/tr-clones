@@ -5,24 +5,30 @@
 //   node scripts/prepare-assets.mjs          the 808
 //   MACHINE=<id> node scripts/prepare-assets.mjs
 //
-// The editor is the core's, so this writes exactly what the core's own
-// script of the same name writes for its site.
+// Each machine gets a folder of its own, apps/host/public/<id>, so the pages
+// of several machines can be built and served side by side. The editor is the
+// core's, so what is written there is exactly what the core's own script of
+// the same name writes for its site.
 
 import { createHash } from 'node:crypto';
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 import { build } from 'esbuild';
-
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const publicDir = join(root, 'apps/host/public');
-const machine = process.env.MACHINE ?? '808';
-const machineDir = join(root, 'machines', machine);
+import { chosenMachine, root } from './machines.mjs';
 
 function fail(message) {
   console.error(`prepare-assets: ${message}`);
   process.exit(1);
 }
+
+let machine;
+try {
+  machine = chosenMachine();
+} catch (error) {
+  fail(error.message);
+}
+const publicDir = join(root, 'apps/host/public', machine);
+const machineDir = join(root, 'machines', machine);
 
 const hash = (bytes) => createHash('sha256').update(bytes).digest('hex').slice(0, 10);
 

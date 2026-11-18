@@ -1,14 +1,17 @@
 import { defineConfig, devices } from '@playwright/test';
+import { MACHINES, chosenMachine } from './scripts/machines.mjs';
 
-const port = Number(process.env.TR_CLONES_E2E_PORT ?? 4323);
-// The page under test is one machine: the one MACHINE named when it was
-// built, the 808 when it named none. A machine's tests are in its folder.
-const machine = process.env.MACHINE ?? '808';
+// The page under test is one machine: the one MACHINE names, the 808 when it
+// names none. A machine's tests are in its folder, and its page is served on
+// a port of its own, so a server left running is never another machine's.
+const machine = chosenMachine();
+const port = Number(process.env.TR_CLONES_E2E_PORT ?? 4323 + MACHINES.indexOf(machine));
 const own = new RegExp(`/${machine}/.*\\.spec\\.ts`);
 const ownPhone = new RegExp(`/${machine}/phone\\.spec\\.ts`);
 
-// The tests run against the production build of the host page, served as
-// plain files with no server behind it. Run `pnpm build` first.
+// The tests run against the production build of that machine's page, served
+// as plain files with no server behind it. Run `pnpm build` first, with the
+// same MACHINE.
 export default defineConfig({
   testDir: 'e2e',
   timeout: 30_000,

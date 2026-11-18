@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BoombapbotEditor } from '@boombapbot/editor';
-import { machine } from '@tr-clones/machine-808';
+import { machine } from '#machine';
 import './styles.css';
 
 const root = document.getElementById('machine');

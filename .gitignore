@@ -2,10 +2,8 @@ node_modules/
 build/
 dist/
 
-# Generated at build time by scripts/prepare-assets.mjs
-apps/host/public/engine/
-apps/host/public/faceplates/
-apps/host/public/boombapbot-assets.json
+# Generated at build time by scripts/prepare-assets.mjs, a folder for each machine
+apps/host/public/
 
 # Playwright
 playwright-report/
