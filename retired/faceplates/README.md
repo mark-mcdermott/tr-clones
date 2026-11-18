@@ -1,8 +1,8 @@
 # Faceplate images
 
 Images in this folder are cleared for distribution, and no build ships them:
-the photographs of the 606, 707, 808 and 909 are kept for when a machine
-wants one. Each image is listed here with where it came from, who made it,
+every machine's panel is a drawing, and the photographs of the 606, 707, 808
+and 909 are kept for when a machine wants one. Each image is listed here with where it came from, who made it,
 its licence and what was changed. The panel a build does ship lives with its
 machine, in the machine package's `art/` folder, with its own record there
 (for the 808, `machines/808/art/README.md`).

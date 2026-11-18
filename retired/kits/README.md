@@ -1,10 +1,10 @@
 # Demo kits
 
 These three kits are **placeholders that nothing loads**. A machine here
-synthesises its own sounds from its knobs, as the 808 does
-(`machines/808/engine/voices.cpp`), so there are no 808 files here. The 606,
-707 and 909 kits are kept, with their check, for when those machines are
-built.
+synthesises its own sounds from its knobs (`machines/<id>/engine/voices.cpp`),
+the 606, the 707 and the 909 included, so there are no 808 files here. The
+three kits are from before those machines were built, and are kept with
+their check.
 
 Every file is synthesised by
 [`retired/gen_demo_kits.py`](../gen_demo_kits.py) from sine sweeps,
@@ -30,9 +30,7 @@ The check allows a difference of one 16-bit step, because the last bit of
 
 ## Using them again
 
-Nothing reads these files today. Building one of those machines means giving
-it a sound source (these samples, or its own synthesiser), a panel manifest
-and a track table like `machines/808/data/machine-808.json`.
+Nothing reads these files today, and no machine here plays samples.
 
 Before licensed recordings are committed, record their rights and provenance
 here, per file.
