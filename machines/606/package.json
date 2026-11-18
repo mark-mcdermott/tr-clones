@@ -1,0 +1,30 @@
+{
+  "name": "@tr-clones/machine-606",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The 606: its project document, its sound and sequencing rules, and its panel.",
+  "exports": {
+    ".": "./src/index.tsx",
+    "./document": "./src/document/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@boombapbot/contracts": "workspace:*",
+    "@boombapbot/editor": "workspace:*",
+    "@tr-clones/panel": "workspace:*",
+    "zod": "4.6.7"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  }
+}

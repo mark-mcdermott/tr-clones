@@ -1,0 +1,66 @@
+/* What only the 606's panel has. The rest is the shared panel stylesheet. */
+
+/* The panel is silver where the shared sheet expects a dark one, so what it
+   lays over a control to answer the pointer is dark here, not light. */
+.sb-606 .sb-panel-step:hover,
+.sb-606 .sb-panel-voice:hover:not(:disabled),
+.sb-606 .sb-panel-power:hover {
+  background: rgb(0 0 0 / 0.12);
+}
+
+.sb-606 .sb-panel-step:active {
+  background: rgb(0 0 0 / 0.26);
+}
+
+/* A white ring is lost on silver: the focus ring is dark, inside a light one. */
+.sb-606 .sb-panel :focus-visible {
+  outline: 0.28cqw solid #111;
+  outline-offset: 0.12cqw;
+  box-shadow: 0 0 0 0.62cqw rgb(255 255 255 / 0.85);
+}
+
+/* The keys of the black section. One that is out of use in this mode says so. */
+.sb-606-key {
+  border-radius: 0.3cqw !important;
+}
+
+.sb-606-key:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.14);
+}
+
+.sb-606-key:active:not(:disabled) {
+  background: rgb(0 0 0 / 0.3);
+}
+
+.sb-606-key:disabled {
+  cursor: not-allowed;
+}
+
+/* FUNCTION and CLEAR stay down until they have done their work. */
+.sb-606-latch[aria-pressed='true'] {
+  background: rgb(0 0 0 / 0.22);
+  box-shadow:
+    inset 0 0 0 0.2cqw #ffd9b0,
+    0 0 1.2cqw 0.2cqw var(--panel-led);
+}
+
+/* The lever of the scale switch: bright metal in its dark slot. */
+.sb-606-lever {
+  border-radius: 0.12cqw;
+  background:
+    linear-gradient(#6f6d65, #6f6d65) 50% 30% / 80% 7% no-repeat,
+    linear-gradient(#6f6d65, #6f6d65) 50% 50% / 80% 7% no-repeat,
+    linear-gradient(#6f6d65, #6f6d65) 50% 70% / 80% 7% no-repeat,
+    linear-gradient(#d9d7ce, #a5a399);
+  box-shadow: 0 0.06cqw 0.18cqw rgb(0 0 0 / 0.7);
+}
+
+/* On the drawn stand-in the keys of the black section are lettered, small enough to fit the narrowest. */
+.sb-606 .sb-panel[data-drawn='true'] .sb-606-key {
+  background: var(--panel-button);
+  color: #111;
+}
+
+.sb-606 .sb-panel[data-drawn='true'] .sb-606-key .sb-panel-text {
+  font-size: 0.82cqw;
+}
