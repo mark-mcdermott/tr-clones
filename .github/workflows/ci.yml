@@ -1,0 +1,127 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  machines:
+    name: Engine, WASM, unit and browser tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: core/.nvmrc
+          cache: pnpm
+
+      - name: Install native build tools
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ninja-build
+
+      - name: Cache Emscripten
+        uses: actions/cache@v4
+        with:
+          path: core/.tools/emsdk
+          key: emsdk-${{ runner.os }}-${{ hashFiles('core/.emscripten-version') }}
+
+      - name: Install the Emscripten the core pins
+        run: pnpm setup:emsdk
+
+      - name: Install JavaScript dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Retired kits match their generator
+        run: pnpm kits:check
+
+      - name: Drawn faceplates match their generator
+        run: pnpm faceplates:check
+
+      - name: Build the native engine and run CTest
+        run: pnpm build:engine
+
+      - name: Build and test the engine with Clang
+        run: |
+          ROOT="$PWD" && source scripts/machines.sh
+          cmake -S core/engine -B build/clang -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ \
+            "-DBOOMBAPBOT_MACHINE_DIRS=$MACHINE_DIRS"
+          cmake --build build/clang
+          ctest --test-dir build/clang --output-on-failure
+
+      - name: Engine tests under AddressSanitizer and UBSan
+        run: |
+          ROOT="$PWD" && source scripts/machines.sh
+          cmake -S core/engine -B build/asan -G Ninja -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-sanitize-recover=all" \
+            "-DBOOMBAPBOT_MACHINE_DIRS=$MACHINE_DIRS"
+          cmake --build build/asan
+          ctest --test-dir build/asan --output-on-failure
+
+      - name: Build the WebAssembly engine
+        run: pnpm build:wasm
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit tests (Vitest, against the WASM build)
+        run: pnpm test:unit
+
+      - name: Build the host page
+        run: pnpm build
+
+      - name: Install Chromium for Playwright
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Browser tests (Playwright, against the built page)
+        run: pnpm test:e2e
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+          retention-days: 7
+
+  vst3:
+    name: VST3 compile spike (Linux)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install JUCE build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            ninja-build pkg-config libx11-dev libxext-dev libxrandr-dev \
+            libxinerama-dev libxcursor-dev libfreetype-dev libfontconfig-dev \
+            libasound2-dev libgl1-mesa-dev
+
+      # Compilation and the processor self-test only. Host scanning, the
+      # validator and Windows and macOS builds are not covered here.
+      - name: Configure (fetches JUCE)
+        run: cmake -S plugins/vst3 -B build/vst3 -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build/vst3
+
+      - name: Processor self-test
+        run: ctest --test-dir build/vst3 --output-on-failure
