@@ -1,0 +1,15 @@
+{
+  "format": "boombapbot.machine",
+  "schemaVersion": 1,
+  "id": "606",
+  "tracks": [
+    { "id": "accent", "short": "AC", "label": "Accent" },
+    { "id": "kick", "short": "BD", "label": "Bass Drum", "level": "bass_drum", "gmNote": 36, "trim": 0.8, "chokeGroup": 0 },
+    { "id": "snare", "short": "SD", "label": "Snare Drum", "level": "snare_drum", "gmNote": 38, "trim": 0.7, "chokeGroup": 0 },
+    { "id": "low_tom", "short": "LT", "label": "Low Tom", "level": "toms", "gmNote": 45, "trim": 0.65, "chokeGroup": 0 },
+    { "id": "high_tom", "short": "HT", "label": "Hi Tom", "level": "toms", "gmNote": 50, "trim": 0.65, "chokeGroup": 0 },
+    { "id": "cymbal", "short": "CY", "label": "Cymbal", "level": "cymbal", "gmNote": 49, "trim": 0.45, "chokeGroup": 0 },
+    { "id": "open_hat", "short": "OH", "label": "Open Hi-Hat", "level": "hi_hat", "gmNote": 46, "trim": 0.38, "chokeGroup": 1 },
+    { "id": "closed_hat", "short": "CH", "label": "Closed Hi-Hat", "level": "hi_hat", "gmNote": 42, "trim": 0.38, "chokeGroup": 1 }
+  ]
+}

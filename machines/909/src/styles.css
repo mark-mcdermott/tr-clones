@@ -1,0 +1,74 @@
+/* What only the 909's panel has. The rest is the shared panel stylesheet. */
+
+/* The power rocker, in the 909's own dark grey. */
+.sb-909 {
+  --panel-rocker-top: #3b3f48;
+  --panel-rocker-bottom: #23262c;
+  --panel-rocker-shine: 0.18;
+}
+
+/* The panel is light, so a key under the pointer darkens where the shared
+   panels lighten. */
+.sb-909-key:hover:not(:disabled),
+.sb-909-step:hover:not(:disabled) {
+  background: rgb(20 26 40 / 0.1);
+}
+
+.sb-909-key:active:not(:disabled),
+.sb-909-step:active:not(:disabled) {
+  background: rgb(20 26 40 / 0.24);
+}
+
+.sb-909-key:disabled,
+.sb-909-step:disabled {
+  cursor: default;
+}
+
+/* Power off: a key that is down shows nothing of it. */
+.sb-panel[data-power='off'] .sb-909-key[aria-pressed='true'] {
+  box-shadow: none;
+}
+
+/* On a light panel the focus ring is dark inside and light outside. */
+.sb-909 .sb-panel :focus-visible {
+  outline-color: #1c2230;
+  box-shadow: 0 0 0 0.55cqw rgb(255 255 255 / 0.85);
+}
+
+/* The lamp behind the window of a key cap. */
+.sb-909-window {
+  border-radius: 0.1cqw;
+}
+
+/* The display: seven-segment digits, lit over the dark window the faceplate draws. */
+.sb-909-display {
+  pointer-events: none;
+}
+
+.sb-909-display svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.sb-909-display path {
+  fill: #ff3b20;
+  opacity: 0.07;
+}
+
+.sb-909-display path[data-on='true'] {
+  opacity: 1;
+  filter: drop-shadow(0 0 0.35cqw rgb(255 59 32 / 0.75));
+}
+
+.sb-panel[data-power='off'] .sb-909-display path {
+  opacity: 0.05;
+  filter: none;
+}
+
+/* On the drawn stand-in, with no faceplate image, the display needs a window of its own. */
+.sb-panel[data-drawn='true'] .sb-909-display {
+  outline: 0.9cqw solid #2a0706;
+  background: #2a0706;
+}

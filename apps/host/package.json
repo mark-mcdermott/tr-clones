@@ -7,11 +7,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@boombapbot/editor": "workspace:*",
+    "@tr-clones/machine-606": "workspace:*",
+    "@tr-clones/machine-707": "workspace:*",
     "@tr-clones/machine-808": "workspace:*",
+    "@tr-clones/machine-909": "workspace:*",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },

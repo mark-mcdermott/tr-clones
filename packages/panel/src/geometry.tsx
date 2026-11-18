@@ -1,8 +1,8 @@
 import type { CSSProperties, PointerEvent } from 'react';
-import type { PanelManifest, PanelRect } from '../document';
+import type { KnobGeometry, PanelFrame, PanelRect } from './schema';
 
 /** Positions a faceplate rectangle as percentages, so it scales with the image. */
-export function box(panel: PanelManifest, [x, y, w, h]: PanelRect): CSSProperties {
+export function box(panel: PanelFrame, [x, y, w, h]: PanelRect): CSSProperties {
   const { width, height } = panel.faceplate;
   return {
     left: `${(x / width) * 100}%`,
@@ -12,7 +12,7 @@ export function box(panel: PanelManifest, [x, y, w, h]: PanelRect): CSSPropertie
   };
 }
 
-export function circle(panel: PanelManifest, cx: number, cy: number, r: number): CSSProperties {
+export function circle(panel: PanelFrame, cx: number, cy: number, r: number): CSSProperties {
   return box(panel, [cx - r, cy - r, r * 2, r * 2]);
 }
 
@@ -21,7 +21,7 @@ export function circle(panel: PanelManifest, cx: number, cy: number, r: number):
  * turns about the knob's centre. Without a photo it is drawn instead.
  */
 export function KnobFace(props: {
-  panel: PanelManifest;
+  panel: PanelFrame;
   photo: string | null;
   cx: number;
   cy: number;
@@ -55,17 +55,12 @@ export function KnobFace(props: {
  * Artwork drawn for boombapbot shades its knobs evenly, so the light on them
  * can stay put while they turn. A photograph carries its own light.
  */
-export function knobLighting(panel: PanelManifest, photo: string | null): 'fixed' | undefined {
+export function knobLighting(panel: PanelFrame, photo: string | null): 'fixed' | undefined {
   return photo && panel.faceplate.original ? 'fixed' : undefined;
 }
 
 /** A knob the pointer cannot turn: it shows where a selector stands. */
-export function PassiveKnob(props: {
-  panel: PanelManifest;
-  photo: string | null;
-  knob: { cx: number; cy: number; r: number; photoDeg: number };
-  deg: number;
-}) {
+export function PassiveKnob(props: { panel: PanelFrame; photo: string | null; knob: KnobGeometry; deg: number }) {
   const { panel, photo, knob } = props;
   return (
     <span
@@ -108,8 +103,8 @@ export function pointerAngle(event: PointerEvent<HTMLElement>, at: [number, numb
  * the accessible way to the same choice, so this is hidden from them.
  */
 export function DialHandle(props: {
-  panel: PanelManifest;
-  knob: { cx: number; cy: number; r: number };
+  panel: PanelFrame;
+  knob: Pick<KnobGeometry, 'cx' | 'cy' | 'r'>;
   /** Pointer angle of each position, in order. */
   degs: readonly number[];
   testId: string;

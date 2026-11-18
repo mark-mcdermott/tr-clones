@@ -1,98 +1,45 @@
 #!/usr/bin/env node
-// Draws faceplate artwork as SVG. The drawings are original: every shape is
-// produced by this script, and no photograph is traced or embedded. Controls
-// the editor makes live (steps, lamps, instrument selector, start/stop, the
-// knobs and the voice switches) are placed from the machine's panel manifest,
-// so the artwork and the hit areas cannot drift apart.
-//
-// The editor turns a knob by rotating a round crop of this image, so every
-// knob is shaded evenly here and the editor lays a fixed light over it. The
-// editor also draws each switch's lever and lights the lamps, so only a
-// switch's slot is drawn here, and every lamp is drawn unlit.
+// Draws the 808's faceplate as SVG. The drawing is original: every shape is
+// produced by this script and what it shares with the other machines'
+// drawings (packages/panel/art/svg.mjs), and no photograph is traced or
+// embedded. Controls the editor makes live (steps, lamps, instrument selector,
+// start/stop, the knobs and the voice switches) are placed from the 808's
+// panel manifest, so the artwork and the hit areas cannot drift apart.
 //
 //   node machines/808/art/draw-faceplate.mjs           write 808.svg beside this file
 //   node machines/808/art/draw-faceplate.mjs --check   fail if the committed file differs
 
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  VERTICAL,
+  castShadow,
+  circle,
+  el,
+  gradient,
+  group,
+  knobBody,
+  knobShadowGradient,
+  lamp,
+  leverSlot,
+  line,
+  liveDial,
+  mixedCaps,
+  n,
+  note,
+  path,
+  pointer,
+  polar,
+  publishFaceplate,
+  readPanel,
+  rect,
+  screw,
+  svgDocument,
+  switchSlot,
+  text,
+} from '../../../packages/panel/art/svg.mjs';
 
-const outDir = dirname(fileURLToPath(import.meta.url));
-const panelDir = join(outDir, '../data');
-
-// ---- SVG helpers -----------------------------------------------------------
-
-const n = (value) => String(Math.round(value * 100) / 100);
-const escapeText = (value) => String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;');
-
-function el(tag, attrs = {}, children = '') {
-  const pairs = Object.entries(attrs)
-    .filter(([, value]) => value !== undefined && value !== null)
-    .map(([key, value]) => ` ${key}="${typeof value === 'number' ? n(value) : value}"`)
-    .join('');
-  const body = Array.isArray(children) ? children.join('') : children;
-  return body === '' ? `<${tag}${pairs}/>` : `<${tag}${pairs}>${body}</${tag}>`;
-}
-
-const rect = (x, y, width, height, attrs = {}) => el('rect', { x, y, width, height, ...attrs });
-const circle = (cx, cy, r, attrs = {}) => el('circle', { cx, cy, r, ...attrs });
-const line = (x1, y1, x2, y2, attrs = {}) => el('line', { x1, y1, x2, y2, ...attrs });
-const path = (d, attrs = {}) => el('path', { d, ...attrs });
-const group = (attrs, children) => el('g', attrs, children);
-
-/** A point at `radius` from a centre. 0 degrees is up; positive is clockwise. */
-function polar(cx, cy, radius, deg) {
-  const rad = (deg * Math.PI) / 180;
-  return [cx + radius * Math.sin(rad), cy - radius * Math.cos(rad)];
-}
-
-// Approximate advance widths of bold grotesque capitals, in ems. They are used
-// only to cap how wide a label may get, so labels fit whatever font draws them.
-const WIDE = { M: 0.83, W: 0.94, O: 0.78, G: 0.78, Q: 0.78 };
-const NARROW = { I: 0.28, J: 0.56, L: 0.61, T: 0.61, F: 0.61, "'": 0.24, '-': 0.33, '/': 0.28, ' ': 0.28, 1: 0.56 };
-const emWidth = (ch) => WIDE[ch] ?? NARROW[ch] ?? (/[0-9]/.test(ch) ? 0.56 : 0.7);
-const textWidth = (value, size) => [...String(value)].reduce((sum, ch) => sum + emWidth(ch) * size, 0);
-
-const FONT = "'Helvetica Neue', Helvetica, Arial, 'Liberation Sans', sans-serif";
-
-function text(x, y, value, { size = 14, fill, anchor = 'middle', weight = 700, spacing, maxWidth } = {}) {
-  const estimate = textWidth(value, size) + (spacing ?? 0) * String(value).length;
-  const squeeze = maxWidth && estimate > maxWidth;
-  return el(
-    'text',
-    {
-      x,
-      y,
-      fill,
-      'font-size': size,
-      'font-weight': weight,
-      'text-anchor': anchor,
-      'letter-spacing': spacing,
-      textLength: squeeze ? maxWidth : undefined,
-      lengthAdjust: squeeze ? 'spacingAndGlyphs' : undefined,
-    },
-    escapeText(value),
-  );
-}
-
-/** A label set in two sizes of capitals: [['B', big], ['ASS', small], ...]. */
-function mixedCaps(x, y, parts, { big, small, fill, maxWidth }) {
-  const estimate = parts.reduce((sum, [value, isBig]) => sum + textWidth(value, isBig ? big : small), 0);
-  const squeeze = estimate > maxWidth;
-  return el(
-    'text',
-    {
-      x,
-      y,
-      fill,
-      'font-weight': 700,
-      'text-anchor': 'middle',
-      textLength: squeeze ? maxWidth : undefined,
-      lengthAdjust: squeeze ? 'spacingAndGlyphs' : undefined,
-    },
-    parts.map(([value, isBig]) => el('tspan', { 'font-size': isBig ? big : small }, escapeText(value))),
-  );
-}
+const artDir = dirname(fileURLToPath(import.meta.url));
 
 // ---- 808 -------------------------------------------------------------------
 
@@ -126,6 +73,9 @@ const C = {
 
 const STEP_COLOURS = [C.red, C.amber, C.yellow, C.white];
 
+/** Every knob on the panel: black, with an orange pointer where it has one. */
+const KNOB = { skirt: C.knobSkirt, rib: C.knobRib, edge: C.knobEdge, cap: C.knobCap, top: C.knobTop, pointer: C.orange };
+
 /** Instrument columns, left to right, with the knobs and plates each carries. */
 const COLUMNS = [
   { plate: [['AC', 1], ['CENT', 0]] },
@@ -148,51 +98,14 @@ const COLUMN_WIDTH = (COLUMN_RIGHT - COLUMN_LEFT) / COLUMNS.length;
 const columnCentre = (index) => COLUMN_LEFT + COLUMN_WIDTH * (index + 0.5);
 
 function defs() {
-  const gradient = (id, stops, attrs) =>
-    el(
-      attrs.r ? 'radialGradient' : 'linearGradient',
-      { id, ...attrs },
-      stops.map(([offset, colour, opacity]) => el('stop', { offset, 'stop-color': colour, 'stop-opacity': opacity })),
-    );
-  const vertical = { x1: 0, y1: 0, x2: 0, y2: 1 };
   return el('defs', {}, [
-    gradient('panel', [[0, C.panelTop], [1, C.panelBottom]], vertical),
+    gradient('panel', [[0, C.panelTop], [1, C.panelBottom]], VERTICAL),
     gradient('cheekLeft', [[0, '#24262c'], [0.5, '#15161a'], [1, '#0b0c0e']], { x1: 0, y1: 0, x2: 1, y2: 0 }),
     gradient('cheekRight', [[0, '#0b0c0e'], [0.5, '#15161a'], [1, '#24262c']], { x1: 0, y1: 0, x2: 1, y2: 0 }),
-    gradient('knobShadow', [[0, '#000', 0.6], [0.72, '#000', 0.5], [1, '#000', 0]], { cx: 0.5, cy: 0.5, r: 0.5 }),
-    gradient('cream', [[0, '#fbf6dc'], [1, '#e2d9ad']], vertical),
-    gradient('well', [[0, '#96938d'], [1, '#85827c']], vertical),
+    knobShadowGradient(),
+    gradient('cream', [[0, '#fbf6dc'], [1, '#e2d9ad']], VERTICAL),
+    gradient('well', [[0, '#96938d'], [1, '#85827c']], VERTICAL),
   ]);
-}
-
-/** The shadow a knob casts on the panel, down and to the right of it. */
-const castShadow = (cx, cy, r) => circle(cx + r * 0.06, cy + r * 0.14, r * 1.2, { fill: 'url(#knobShadow)' });
-
-/**
- * A black knob seen from above: a ribbed skirt, a chamfered edge and a flat
- * matte top. It has no light of its own, so it looks the same at any angle.
- */
-function knobBody(cx, cy, r, ribs) {
-  // The ribs are one dashed ring: its stroke is as wide as a rib is long.
-  const middle = r * 0.9175;
-  const pitch = (2 * Math.PI * middle) / ribs;
-  return group({}, [
-    circle(cx, cy, r, { fill: C.knobSkirt }),
-    circle(cx, cy, middle, {
-      fill: 'none',
-      stroke: C.knobRib,
-      'stroke-width': r * 0.135,
-      'stroke-dasharray': `${n(pitch * 0.46)} ${n(pitch * 0.54)}`,
-    }),
-    circle(cx, cy, r * 0.84, { fill: C.knobCap, stroke: C.knobEdge, 'stroke-width': Math.max(1, r * 0.022) }),
-    circle(cx, cy, r * 0.75, { fill: C.knobTop }),
-  ]);
-}
-
-function pointer(cx, cy, r, deg) {
-  const [x1, y1] = polar(cx, cy, r * 0.42, deg);
-  const [x2, y2] = polar(cx, cy, r * 0.9, deg);
-  return line(x1, y1, x2, y2, { stroke: C.orange, 'stroke-width': Math.max(3, r * 0.075), 'stroke-linecap': 'round' });
 }
 
 /** A small knob with a coloured cap inside a tick ring. The editor lights it. */
@@ -211,17 +124,9 @@ function smallKnob(cx, cy, { cap, deg, marker = false }) {
     ...ticks,
     marker ? circle(mx, my, 3, { fill: C.orange }) : '',
     castShadow(cx, cy, 22),
-    knobBody(cx, cy, 22, 26),
+    knobBody(cx, cy, 22, 26, KNOB),
     circle(cx, cy, 13, { fill: cap, stroke: '#000', 'stroke-opacity': 0.35, 'stroke-width': 1 }),
     line(qx, qy, px, py, { stroke: C.plateInk, 'stroke-width': 3.2, 'stroke-linecap': 'round' }),
-  ]);
-}
-
-function screw(cx, cy) {
-  return group({}, [
-    circle(cx, cy, 7.5, { fill: '#1b1c20', stroke: '#3d3e44', 'stroke-width': 1 }),
-    line(cx - 3.5, cy - 3.5, cx + 3.5, cy + 3.5, { stroke: '#08090a', 'stroke-width': 1.8 }),
-    line(cx - 3.5, cy + 3.5, cx + 3.5, cy - 3.5, { stroke: '#08090a', 'stroke-width': 1.8 }),
   ]);
 }
 
@@ -230,31 +135,6 @@ function plate(cx, y, parts) {
     rect(cx - 50, y + 1.5, 100, 34, { rx: 4, fill: '#000', opacity: 0.35 }),
     rect(cx - 50, y, 100, 34, { rx: 4, fill: 'url(#cream)' }),
     mixedCaps(cx, y + 26, parts, { big: 24, small: 12.5, fill: C.plateInk, maxWidth: 88 }),
-  ]);
-}
-
-/** A knob the editor turns: its body and pointer, with no light of its own. */
-function liveDial(knob, ribs) {
-  return group({}, [
-    castShadow(knob.cx, knob.cy, knob.r),
-    knobBody(knob.cx, knob.cy, knob.r - 1, ribs),
-    pointer(knob.cx, knob.cy, knob.r - 1, knob.photoDeg),
-  ]);
-}
-
-/** The slot of a slide switch. The editor draws the lever in it. */
-const switchSlot = ([x, y, w, h]) => rect(x, y, w, h, { rx: 3, fill: '#0b0c0e' });
-
-/** The rounded slot of a lever switch. The editor draws the lever in it. */
-const leverSlot = ([x, y, w, h]) => rect(x, y, w, h, { rx: h / 2, fill: '#0b0c0e' });
-
-const lamp = ([x, y], r) => circle(x, y, r, { fill: C.ledOff });
-
-function note(x, y, { flag }) {
-  return group({ fill: C.wellInk, stroke: C.wellInk }, [
-    el('ellipse', { cx: x, cy: y + 6, rx: 5, ry: 3.8, transform: `rotate(-20 ${n(x)} ${n(y + 6)})`, stroke: 'none' }),
-    line(x + 4.4, y + 5, x + 4.4, y - 11, { 'stroke-width': 1.8 }),
-    flag ? path(`M${n(x + 4.4)} ${n(y - 11)} q7 3 6 11`, { fill: 'none', 'stroke-width': 1.8 }) : '',
   ]);
 }
 
@@ -328,7 +208,7 @@ function draw808(panel) {
     const [x, y] = polar(mode.knob.cx, mode.knob.cy, 47, position.deg);
     out.push(circle(x, y, 2, { fill: C.label }));
   }
-  out.push(liveDial(mode.knob, 35));
+  out.push(liveDial(mode.knob, 35, KNOB));
   out.push(rect(190, 377, 108, 20, thin));
   out.push(text(244, 392, 'PATTERN CLEAR', { size: 11.5, fill: C.cream, maxWidth: 100 }));
   out.push(text(196, 414, 'STEP', { size: 10.5, fill: C.cream }));
@@ -353,7 +233,7 @@ function draw808(panel) {
     out.push(text(x + w / 2, y + h - 4.2, position.label, { size: 13, fill: C.plateInk }));
     out.push(text(nx, ny + 3, index + 1, { size: 8, fill: C.orange, weight: 400 }));
   });
-  out.push(liveDial(knob, 30));
+  out.push(liveDial(knob, 30, KNOB));
 
   // Auto fill-in.
   const fill = panel.autoFill;
@@ -370,7 +250,7 @@ function draw808(panel) {
       }),
     );
   });
-  out.push(liveDial(fill.knob, 34));
+  out.push(liveDial(fill.knob, 34, KNOB));
   out.push(text(fill.knob.cx, fill.knob.cy + 66, 'MEASURES', { size: 9, fill: C.label, weight: 400 }));
   out.push(text(fill.knob.cx, fill.knob.cy + 80, 'AUTO FILL IN', { size: 12, fill: C.label }));
   out.push(screw(430, 586));
@@ -384,8 +264,8 @@ function draw808(panel) {
     const [x, y] = polar(tempo.cx, tempo.cy, 99, tempo.minDeg + (i * (tempo.maxDeg - tempo.minDeg)) / 10);
     out.push(text(x, y + 6, i, { size: 17, fill: C.wellInk }));
   }
-  out.push(knobBody(tempo.cx, tempo.cy, tempo.r - 1, 72));
-  out.push(pointer(tempo.cx, tempo.cy, tempo.r - 1, tempo.photoDeg));
+  out.push(knobBody(tempo.cx, tempo.cy, tempo.r - 1, 72, KNOB));
+  out.push(pointer(tempo.cx, tempo.cy, tempo.r - 1, tempo.photoDeg, KNOB.pointer));
 
   // Fine tempo.
   const fine = panel.fine;
@@ -394,7 +274,7 @@ function draw808(panel) {
     const [x, y] = polar(fine.cx, fine.cy, 36, fine.minDeg + (i * (fine.maxDeg - fine.minDeg)) / 6);
     out.push(circle(x, y, 2, { fill: C.label }));
   }
-  out.push(liveDial(fine, 24));
+  out.push(liveDial(fine, 24, KNOB));
   out.push(text(fine.cx - 36, fine.cy + 40, 'SLOW', { size: 9.5, fill: C.label }));
   out.push(text(fine.cx + 40, fine.cy + 40, 'FAST', { size: 9.5, fill: C.label }));
 
@@ -449,7 +329,7 @@ function draw808(panel) {
     const [dx, dy] = polar(master.cx, master.cy, 50, master.minDeg + (i * (master.maxDeg - master.minDeg)) / 10);
     out.push(circle(dx, dy, 2, { fill: C.label }));
   }
-  out.push(liveDial(master, 36));
+  out.push(liveDial(master, 36, KNOB));
   out.push(text(master.cx - 44, master.cy + 54, 'MIN', { size: 9.5, fill: C.label }));
   out.push(text(master.cx + 44, master.cy + 54, 'MAX', { size: 9.5, fill: C.label }));
   out.push(text(master.cx, master.cy + 70, master.label, { size: 12, fill: C.label, maxWidth: 118 }));
@@ -469,8 +349,8 @@ function draw808(panel) {
   out.push(leverSlot(panel.basicVariation.slot));
   [['A', 245], ['AB', 274], ['B', 303]].forEach(([label, x]) => out.push(text(x, 866, label, { size: 11.5, fill: C.wellInk })));
   out.push(rect(233, 876, 82, 22, { rx: 3, fill: C.recess }));
-  out.push(lamp(panel.lamps.variationA, panel.lamps.radius));
-  out.push(lamp(panel.lamps.variationB, panel.lamps.radius));
+  out.push(lamp(panel.lamps.variationA, panel.lamps.radius, C.ledOff));
+  out.push(lamp(panel.lamps.variationB, panel.lamps.radius, C.ledOff));
   out.push(line(168, 913, 377, 913, { stroke: C.wellInk, 'stroke-width': 1.5 }));
   for (const control of panel.transport) {
     const [x, y, w, h] = control.hit;
@@ -518,16 +398,16 @@ function draw808(panel) {
           }),
         );
       }
-      notes.forEach((x) => out.push(note(x - 2, row.y + 15, { flag: row.flag })));
+      notes.forEach((x) => out.push(note(x - 2, row.y + 15, { flag: row.flag, fill: C.wellInk })));
     }
   });
 
   // Step keys. Lamps are drawn unlit; the editor lights them.
   out.push(path(`M392 908 H483 V903 L497 919 L483 935 V930 H392 Z`, { fill: C.well }));
   out.push(text(437, 925, 'STEP NO', { size: 13, fill: C.wellInk, maxWidth: 80 }));
-  out.push(lamp(panel.lamps.firstPart, panel.lamps.radius - 1));
+  out.push(lamp(panel.lamps.firstPart, panel.lamps.radius - 1, C.ledOff));
   out.push(text(436, 975, '1st PART', { size: 11.5, fill: C.label }));
-  out.push(lamp(panel.lamps.secondPart, panel.lamps.radius - 1));
+  out.push(lamp(panel.lamps.secondPart, panel.lamps.radius - 1, C.ledOff));
   out.push(text(436, 1030, '2nd PART', { size: 11.5, fill: C.label }));
   steps.forEach((step, index) => {
     const [x, y, w, h] = step.button;
@@ -564,42 +444,7 @@ function draw808(panel) {
   out.push(path('M1827 1050 H1699 V1045 L1683 1061 L1699 1077 V1072 H1827 Z', { fill: C.wellInk }));
   out.push(text(1763, 1066, 'INTRO/FILL IN', { size: 14, fill: C.well, maxWidth: 118 }));
 
-  return (
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" ` +
-    `font-family="${FONT}">` +
-    el('title', {}, `${panel.id} panel`) +
-    defs() +
-    out.join('') +
-    '</svg>\n'
-  );
+  return svgDocument(panel, { defs: defs(), body: out.join('') });
 }
 
-// ---- Main ------------------------------------------------------------------
-
-const DRAWINGS = { 808: draw808 };
-// The owner does not want manufacturer or product names in the artwork.
-const BRANDING = /roland|rhythm composer|tr-?\d{3}|computer controlled/i;
-
-const check = process.argv.includes('--check');
-let stale = 0;
-for (const [id, draw] of Object.entries(DRAWINGS)) {
-  const panel = JSON.parse(readFileSync(join(panelDir, `${id}.panel.json`), 'utf8'));
-  const svg = draw(panel);
-  if (BRANDING.test(svg)) {
-    console.error(`draw-faceplate: the ${id} drawing contains a brand or product name.`);
-    process.exit(1);
-  }
-  const target = join(outDir, `${id}.svg`);
-  if (check) {
-    const ok = existsSync(target) && readFileSync(target, 'utf8') === svg;
-    console.log(`${ok ? 'ok      ' : 'differs '} machines/808/art/${id}.svg`);
-    if (!ok) stale += 1;
-  } else {
-    writeFileSync(target, svg);
-    console.log(`wrote    machines/808/art/${id}.svg (${svg.length} bytes)`);
-  }
-}
-if (stale > 0) {
-  console.error('draw-faceplate: run pnpm faceplates:draw and commit the result.');
-  process.exit(1);
-}
+publishFaceplate(artDir, draw808(readPanel(artDir)));

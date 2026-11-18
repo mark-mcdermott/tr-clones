@@ -1,0 +1,30 @@
+{
+  "name": "@tr-clones/panel",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "What the hardware panels here share: faceplate geometry, knobs, switches and lamps, their styles, the manifest pieces that place them, and the helpers their drawings are made with.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./styles.css": "./src/styles.css",
+    "./svg": "./art/svg.mjs"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@boombapbot/editor": "workspace:*",
+    "zod": "4.6.7"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  }
+}

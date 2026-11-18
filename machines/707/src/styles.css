@@ -1,0 +1,89 @@
+/* What only the 707's panel has. The rest is the shared panel stylesheet. */
+
+/* The display: a canvas laid exactly over the glass of the drawing. */
+.sb-707-display {
+  overflow: hidden;
+  border-radius: 0.1cqw;
+}
+
+.sb-707-display canvas,
+.sb-707-strip-display canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* A fader: its slot is in the drawing, and this is the cap that slides in it. */
+.sb-707-fader {
+  border-radius: 0.3cqw;
+  cursor: ns-resize;
+  touch-action: none;
+}
+
+.sb-707-fader-cap {
+  position: absolute;
+  border-radius: 0.15cqw;
+  background:
+    linear-gradient(#e9e6dc, #e9e6dc) 50% 50% / 100% 9% no-repeat,
+    linear-gradient(#6a6a70, #47474c 46%, #2f2f33 54%, #56565b);
+  box-shadow:
+    0 0.12cqw 0.25cqw rgb(0 0 0 / 0.5),
+    inset 0 0.05cqw 0 rgb(255 255 255 / 0.22);
+  pointer-events: none;
+  transition: top 60ms ease-out;
+}
+
+.sb-707-fader[data-marked='true'] .sb-707-fader-cap {
+  background:
+    linear-gradient(var(--panel-accent), var(--panel-accent)) 50% 50% / 100% 9% no-repeat,
+    linear-gradient(#6a6a70, #47474c 46%, #2f2f33 54%, #56565b);
+}
+
+.sb-707-fader:hover .sb-707-fader-cap,
+.sb-707-fader:active .sb-707-fader-cap {
+  filter: brightness(1.18);
+}
+
+/* The lamps are bars, not dots. */
+.sb-panel-led.sb-707-lamp {
+  border-radius: 0.06cqw;
+}
+
+/* A key that is down stays pushed in until the key that completes it is pressed. */
+.sb-707-key[aria-pressed='true'] {
+  background: rgb(0 0 0 / 0.3);
+}
+
+.sb-707-key:disabled:hover {
+  background: transparent;
+}
+
+/* On the cream of the case a white focus ring would be lost, and a wide one would cover the lettering. */
+.sb-panel[data-photo='photo'] :focus-visible {
+  outline: 0.25cqw solid #151517;
+  outline-offset: 0;
+  box-shadow: 0 0 0 0.42cqw rgb(255 255 255 / 0.8);
+}
+
+/* The stand-in drawn without the faceplate: the small keys have room for small letters only. */
+.sb-panel[data-drawn='true'] .sb-707-key .sb-panel-text {
+  overflow: hidden;
+  font-size: 0.68cqw;
+  line-height: 1.1;
+}
+
+/* Under the panel on a phone: the display again, large enough to read. */
+.sb-707-strip-display {
+  overflow: hidden;
+  aspect-ratio: 500 / 284;
+  border: 1px solid var(--color-line-soft);
+  border-radius: var(--radius);
+  background: #2a2f29;
+}
+
+/* The small keys again, as buttons a thumb can find: four to a row. */
+.sb-707-strip-keys .sb-button {
+  flex: 1 1 22%;
+  min-height: 44px;
+  padding-inline: 6px;
+}

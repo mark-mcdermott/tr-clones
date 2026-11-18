@@ -1,4 +1,16 @@
-import type { CSSProperties, KeyboardEvent, MouseEvent, PointerEvent } from 'react';
+import type { KeyboardEvent, PointerEvent } from 'react';
+import {
+  DialHandle,
+  Lamp,
+  Lever,
+  PassiveKnob,
+  PositionSwitch,
+  box,
+  pressHandlers,
+  nearestPosition,
+  pointerAngle,
+  slideLever,
+} from '@tr-clones/panel';
 import {
   AUTO_FILLS,
   BASIC_RHYTHMS,
@@ -9,11 +21,9 @@ import {
   writePart,
   type Mode,
   type PanelManifest,
-  type PanelRect,
   type PreScale,
 } from '../document';
-import { useEditorState, useRuntime, type Runtime808 } from './context';
-import { DialHandle, PassiveKnob, box, circle, nearestPosition, pointerAngle } from './panelGeometry';
+import { useEditorState, useRuntime } from './context';
 
 interface ControlProps {
   panel: PanelManifest;
@@ -27,35 +37,6 @@ export function rhythmName(button: number): string {
 /** Modes in which CLEAR does something: it wipes a rhythm, sets up a part, or empties a rhythm track. */
 export function clears(mode: Mode): boolean {
   return mode === 'pattern_clear' || mode === 'compose' || writePart(mode) !== null;
-}
-
-/** The power switch. Off, the machine is dark and silent and nothing else on it answers. */
-export function PowerSwitch({ panel }: ControlProps) {
-  const runtime = useRuntime();
-  const on = useEditorState((state) => state.power);
-  const [x, y, width, height] = panel.power.rocker;
-  return (
-    <>
-      <button
-        type="button"
-        role="switch"
-        className="sb-panel-switch sb-panel-power"
-        style={box(panel, panel.power.hit)}
-        data-testid="panel-power"
-        aria-checked={on}
-        aria-label="Power"
-        onClick={() => runtime.setPower(!on)}
-      >
-        <span className="sb-panel-text">Power</span>
-      </button>
-      {/* The half of the rocker that stands proud: the top when it is on. */}
-      <span
-        className="sb-panel-rocker"
-        aria-hidden="true"
-        style={box(panel, [x, on ? y : y + height / 2, width, height / 2])}
-      />
-    </>
-  );
 }
 
 /** The mode selector: a label to press for each position, and the dial that follows. */
@@ -133,16 +114,6 @@ export function taps(mode: Mode): boolean {
   return isPerformMode(mode) || writePart(mode) !== null;
 }
 
-/** TAP has to be in time, so it acts as the pointer goes down. Only the keyboard arrives as a click. */
-export function tapHandlers(runtime: Runtime808) {
-  return {
-    onPointerDown: () => runtime.session.tap(),
-    onClick: (event: MouseEvent) => {
-      if (event.detail === 0) runtime.session.tap();
-    },
-  };
-}
-
 /**
  * TAP. In a write mode it writes the selected instrument where the rhythm is
  * now; in a play mode it sets the intro or triggers the fill-in. It acts on
@@ -163,62 +134,10 @@ export function TapButton({ panel }: ControlProps) {
       aria-label={playMode ? 'Tap: play the intro or fill-in next' : 'Tap: write the selected instrument now'}
       aria-pressed={playMode ? armed : undefined}
       disabled={idle}
-      {...tapHandlers(runtime)}
+      {...pressHandlers(() => runtime.session.tap())}
     >
       <span className="sb-panel-text">Tap</span>
     </button>
-  );
-}
-
-interface PositionSwitchProps {
-  panel: PanelManifest;
-  hit: PanelRect;
-  label: string;
-  testId: string;
-  /** What each position is called, in order along the switch. */
-  positions: readonly string[];
-  index: number;
-  axis: 'x' | 'y';
-  onChange(index: number): void;
-}
-
-/** A switch with a few fixed positions: press where it should go, or use the arrow keys. */
-function PositionSwitch(props: PositionSwitchProps) {
-  const { positions, index, axis, onChange } = props;
-  const last = positions.length - 1;
-  const move = (next: number) => onChange(Math.min(last, Math.max(0, next)));
-
-  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const forward = axis === 'x' ? 'ArrowRight' : 'ArrowDown';
-    const back = axis === 'x' ? 'ArrowLeft' : 'ArrowUp';
-    const target = { [forward]: index + 1, [back]: index - 1, Home: 0, End: last }[event.key];
-    if (target === undefined) return;
-    event.preventDefault();
-    move(target);
-  };
-
-  const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const along = axis === 'x' ? (event.clientX - rect.left) / rect.width : (event.clientY - rect.top) / rect.height;
-    move(Math.floor(along * positions.length));
-  };
-
-  return (
-    <div
-      className="sb-panel-switch"
-      style={box(props.panel, props.hit)}
-      role="slider"
-      tabIndex={0}
-      data-testid={props.testId}
-      aria-label={props.label}
-      aria-orientation={axis === 'x' ? 'horizontal' : 'vertical'}
-      aria-valuemin={0}
-      aria-valuemax={last}
-      aria-valuenow={index}
-      aria-valuetext={positions[index]}
-      onKeyDown={onKeyDown}
-      onPointerDown={onPointerDown}
-    />
   );
 }
 
@@ -275,14 +194,6 @@ export function AutoFillSelector({ panel, photo }: ControlProps & { photo: strin
   );
 }
 
-/** Where the lever of a slide switch sits in its slot, for one of `count` positions. */
-function slideLever([x, y, width, height]: PanelRect, index: number, count: number): PanelRect {
-  const inset = 3;
-  const lever = 24;
-  const travel = height - inset * 2 - lever;
-  return [x + inset, y + inset + (travel * index) / (count - 1), width - inset * 2, lever];
-}
-
 const PRE_SCALE_TEXT = PRE_SCALES.map((preScale) => `${preScale}: ${stepsPerBeat(preScale)} steps to the beat`);
 
 export function PreScaleSwitch({ panel }: ControlProps) {
@@ -306,27 +217,6 @@ export function PreScaleSwitch({ panel }: ControlProps) {
         aria-hidden="true"
         style={box(panel, slideLever(panel.preScale.slot, index, PRE_SCALES.length))}
       />
-    </>
-  );
-}
-
-const BALL = 9;
-
-/** A lever thrown along a rounded slot: a stem from the middle and a ball at its end. */
-function Lever({ panel, slot, index, count }: ControlProps & { slot: PanelRect; index: number; count: number }) {
-  const [x, y, width, height] = slot;
-  const middle = x + width / 2;
-  const reach = width / 2 - 15;
-  const tip = middle + (count === 1 ? 0 : (index / (count - 1)) * 2 - 1) * reach;
-  const centre = y + height / 2 + 1;
-  return (
-    <>
-      <span
-        className="sb-panel-stem"
-        aria-hidden="true"
-        style={box(panel, [Math.min(middle, tip), centre - 3, Math.abs(tip - middle), 6])}
-      />
-      <span className="sb-panel-ball" aria-hidden="true" style={circle(panel, tip, centre, BALL)} />
     </>
   );
 }
@@ -381,15 +271,8 @@ export function StatusLamps({ panel, dim }: ControlProps & { dim: boolean }) {
   const first = playing ? !secondPlaying : part === 0;
   const b = playing ? patternB : variation === 'b';
   const { lamps } = panel;
-  const lamp = (testId: string, [x, y]: [number, number], on: boolean, radius = lamps.radius) => (
-    <span
-      className="sb-panel-led"
-      aria-hidden="true"
-      data-testid={testId}
-      data-on={on}
-      data-dim={dim}
-      style={circle(panel, x, y, radius) as CSSProperties}
-    />
+  const lamp = (testId: string, at: [number, number], on: boolean, radius = lamps.radius) => (
+    <Lamp panel={panel} at={at} radius={radius} on={on} dim={dim} testId={testId} />
   );
   return (
     <>
