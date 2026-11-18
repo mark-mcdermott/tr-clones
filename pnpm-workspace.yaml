@@ -1,0 +1,9 @@
+# The core's shared packages come from the boombapbot checkout in core/. Its
+# own machines and its site are not part of this workspace.
+packages:
+  - core/packages/contracts
+  - core/packages/editor
+  - machines/*
+  - apps/*
+onlyBuiltDependencies:
+  - esbuild

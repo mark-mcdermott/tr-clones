@@ -1,0 +1,33 @@
+{
+  "name": "tr-clones",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Drum machines built on boombapbot's core.",
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22.23.4 <23"
+  },
+  "scripts": {
+    "setup:emsdk": "./core/scripts/setup-emsdk.sh",
+    "faceplates:draw": "node machines/808/art/draw-faceplate.mjs",
+    "faceplates:check": "node machines/808/art/draw-faceplate.mjs --check",
+    "build:engine": "./scripts/build-engine.sh",
+    "build:wasm": "./scripts/build-wasm.sh",
+    "prepare:assets": "node scripts/prepare-assets.mjs",
+    "dev": "node scripts/prepare-assets.mjs && pnpm --filter @tr-clones/host dev",
+    "build": "node scripts/prepare-assets.mjs && pnpm --filter @tr-clones/host build",
+    "preview": "pnpm --filter @tr-clones/host preview",
+    "typecheck": "tsc --noEmit -p machines/808 && tsc --noEmit -p apps/host",
+    "test": "pnpm test:engine && pnpm test:unit",
+    "test:engine": "ctest --test-dir build/native --output-on-failure",
+    "test:unit": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "esbuild": "0.28.2",
+    "typescript": "6.0.3",
+    "vitest": "5.1.0"
+  }
+}
