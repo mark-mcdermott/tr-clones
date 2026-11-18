@@ -1,0 +1,61 @@
+{
+  "format": "boombapbot.project",
+  "schemaVersion": 1,
+  "id": "fixture-kick-snare-hat",
+  "name": "Kick snare hat fixture",
+  "createdAt": "2026-01-01T00:00:00.000Z",
+  "updatedAt": "2026-01-01T00:00:00.000Z",
+  "bpm": 124,
+  "swing": 56,
+  "kit": {
+    "id": "808",
+    "version": "0.1.0-demo.1"
+  },
+  "pattern": {
+    "id": "pattern-1",
+    "name": "Pattern 1",
+    "stepCount": 16,
+    "lanes": [
+      {
+        "id": "lane-kick",
+        "role": "kick",
+        "steps": [127, 0, 0, 0, 100, 0, 0, 0, 127, 0, 0, 80, 100, 0, 0, 0]
+      },
+      {
+        "id": "lane-snare",
+        "role": "snare",
+        "steps": [0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 110, 0, 0, 60]
+      },
+      {
+        "id": "lane-closed-hat",
+        "role": "closed_hat",
+        "steps": [100, 70, 70, 70, 100, 70, 0, 70, 100, 70, 70, 70, 100, 70, 0, 70]
+      },
+      {
+        "id": "lane-open-hat",
+        "role": "open_hat",
+        "steps": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      {
+        "id": "lane-low-tom",
+        "role": "low_tom",
+        "steps": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      {
+        "id": "lane-high-tom",
+        "role": "high_tom",
+        "steps": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      {
+        "id": "lane-clap",
+        "role": "clap",
+        "steps": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      },
+      {
+        "id": "lane-cymbal",
+        "role": "cymbal",
+        "steps": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      }
+    ]
+  }
+}

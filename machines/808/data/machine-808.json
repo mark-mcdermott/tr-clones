@@ -1,0 +1,19 @@
+{
+  "format": "boombapbot.machine",
+  "schemaVersion": 1,
+  "id": "808",
+  "tracks": [
+    { "id": "accent", "short": "AC", "label": "Accent" },
+    { "id": "kick", "short": "BD", "label": "Bass Drum", "sound": "kick", "trim": 0.85, "pan": 0, "chokeGroup": 0, "knobs": ["tone", "decay"] },
+    { "id": "snare", "short": "SD", "label": "Snare Drum", "sound": "snare", "trim": 0.75, "pan": 0, "chokeGroup": 0, "knobs": ["tone", "snappy"] },
+    { "id": "low_tom", "short": "LT", "label": "Low Tom", "sound": "low_tom", "alternate": "low_conga", "trim": 0.7, "pan": -0.3, "chokeGroup": 0, "knobs": ["tune"] },
+    { "id": "mid_tom", "short": "MT", "label": "Mid Tom", "sound": "mid_tom", "alternate": "mid_conga", "trim": 0.7, "pan": 0, "chokeGroup": 0, "knobs": ["tune"] },
+    { "id": "high_tom", "short": "HT", "label": "Hi Tom", "sound": "high_tom", "alternate": "high_conga", "trim": 0.7, "pan": 0.3, "chokeGroup": 0, "knobs": ["tune"] },
+    { "id": "rim_shot", "short": "RS", "label": "Rim Shot", "sound": "rim_shot", "alternate": "claves", "trim": 0.7, "pan": 0.15, "chokeGroup": 0, "knobs": [] },
+    { "id": "clap", "short": "CP", "label": "Hand Clap", "sound": "clap", "alternate": "maracas", "trim": 0.8, "pan": 0, "chokeGroup": 0, "knobs": [] },
+    { "id": "cowbell", "short": "CB", "label": "Cowbell", "sound": "cowbell", "trim": 0.6, "pan": -0.15, "chokeGroup": 0, "knobs": [] },
+    { "id": "cymbal", "short": "CY", "label": "Cymbal", "sound": "cymbal", "trim": 0.55, "pan": 0.1, "chokeGroup": 0, "knobs": ["tone", "decay"] },
+    { "id": "open_hat", "short": "OH", "label": "Open Hi-Hat", "sound": "open_hat", "trim": 0.4, "pan": 0.2, "chokeGroup": 1, "knobs": ["decay"] },
+    { "id": "closed_hat", "short": "CH", "label": "Closed Hi-Hat", "sound": "closed_hat", "trim": 0.4, "pan": 0.2, "chokeGroup": 1, "knobs": [] }
+  ]
+}

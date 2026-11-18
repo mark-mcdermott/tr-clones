@@ -1,0 +1,438 @@
+/* The 808's panel. The editor's own stylesheet has everything around it. */
+
+/* ---- Hardware panel ----------------------------------------------------- */
+
+.sb-hardware {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sb-panel-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--color-line-soft);
+  border-radius: var(--radius);
+  background: #000;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sb-panel {
+  position: relative;
+  width: 100%;
+  container-type: inline-size;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.sb-panel-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.sb-panel > *,
+.sb-panel-controls > *,
+.sb-panel-layer > * {
+  position: absolute;
+}
+
+/* Everything on the machine but its power switch. It takes up no box of its
+   own, so its children sit on the faceplate as before. */
+.sb-panel > .sb-panel-controls {
+  position: static;
+  display: contents;
+}
+
+/* The raised half of the power rocker. */
+.sb-panel-rocker {
+  border-radius: 0.15cqw;
+  background: linear-gradient(#34353b, #26272c);
+  box-shadow: inset 0 0.05cqw 0 rgb(255 255 255 / 0.12);
+  pointer-events: none;
+}
+
+/* A selector dial is turned to one of a few positions: press where it should point. */
+.sb-panel-dial {
+  border-radius: 50%;
+  cursor: pointer;
+  touch-action: none;
+}
+
+/* Groups of controls span the faceplate so their children can be placed in
+   faceplate coordinates. Only the controls themselves take pointer events. */
+.sb-panel-layer {
+  inset: 0;
+  pointer-events: none;
+}
+
+.sb-panel-layer > * {
+  pointer-events: auto;
+}
+
+.sb-panel button {
+  padding: 0;
+  border: 0;
+  border-radius: 0.5cqw;
+  background: transparent;
+}
+
+.sb-panel :focus-visible {
+  outline: 0.3cqw solid #fff;
+  outline-offset: 0.1cqw;
+  box-shadow: 0 0 0 0.6cqw rgb(0 0 0 / 0.6);
+}
+
+/* On a photo the labels are already printed; keep ours for the drawn panel. */
+.sb-panel-text {
+  display: none;
+}
+
+.sb-panel-step:hover,
+.sb-panel-transport:hover,
+.sb-panel-switch:hover,
+.sb-panel-voice:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.12);
+}
+
+.sb-panel-step:active,
+.sb-panel-transport:active {
+  background: rgb(0 0 0 / 0.28);
+}
+
+.sb-panel-voice[aria-checked='true'] {
+  box-shadow: 0 0 0 0.22cqw var(--panel-accent), 0 0 1.2cqw var(--panel-accent);
+}
+
+.sb-panel-transport[aria-pressed='true'] {
+  box-shadow: inset 0 0 0 0.25cqw var(--panel-accent);
+}
+
+.sb-panel-led {
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* An unlit lamp is painted only where the photo shows it lit, or on the
+   drawn panel. Elsewhere the photo's own unlit lamp is left alone. */
+.sb-panel-led[data-dim='true'] {
+  background: #2a0605;
+  box-shadow: inset 0 0 0.3cqw rgb(0 0 0 / 0.8);
+}
+
+.sb-panel-led[data-on='true'] {
+  background: radial-gradient(circle at 40% 35%, #fff 0%, var(--panel-led) 45%, #a10d05 100%);
+  box-shadow: 0 0 1cqw 0.25cqw var(--panel-led);
+}
+
+/* The rhythm that will play flashes while the machine waits for start. */
+.sb-panel-led[data-flash='true'] {
+  animation: sb-lamp-flash 0.6s steps(1, end) infinite;
+}
+
+@keyframes sb-lamp-flash {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.sb-panel-led[data-now='true'] {
+  background: radial-gradient(circle at 50% 50%, #fff 0%, #ffd9b0 60%, var(--panel-led) 100%);
+  box-shadow: 0 0 1.4cqw 0.5cqw #ffd9b0;
+}
+
+/* Power off: every lamp is dark, whatever it would be showing. */
+.sb-panel[data-power='off'] .sb-panel-led {
+  background: none;
+  box-shadow: none;
+  animation: none;
+}
+
+.sb-panel[data-power='off'] .sb-panel-led[data-dim='true'] {
+  background: #2a0605;
+  box-shadow: inset 0 0 0.3cqw rgb(0 0 0 / 0.8);
+}
+
+/* A switch with fixed positions: press where it should go. */
+.sb-panel-switch[role='slider'] {
+  border-radius: 0.5cqw;
+  cursor: pointer;
+  touch-action: none;
+}
+
+/* CLEAR sits over its red button. Held down, it glows until a step is pressed. */
+.sb-panel-clear {
+  border-radius: 50% !important;
+}
+
+.sb-panel-clear:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.sb-panel-clear[aria-pressed='true'] {
+  background: rgba(0, 0, 0, 0.28);
+  box-shadow:
+    0 0 0 0.2cqw #ffd9b0,
+    0 0 1.4cqw 0.3cqw var(--panel-led);
+}
+
+/* A lever thrown along a rounded slot: a stem and the ball at its end. */
+.sb-panel-stem {
+  border-radius: 999px;
+  background: #6f7073;
+  pointer-events: none;
+  transition: left 90ms ease-out, width 90ms ease-out;
+}
+
+.sb-panel-ball {
+  border-radius: 50%;
+  background: linear-gradient(#f4f4f2, #8f8f8d);
+  box-shadow: 0 0.08cqw 0.2cqw rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  transition: left 90ms ease-out;
+}
+
+/* The lever of a slide switch. The faceplate has its slot; this moves in it. */
+.sb-panel-lever {
+  border-radius: 0.1cqw;
+  background:
+    linear-gradient(#15161a, #15161a) 50% 22% / 75% 8% no-repeat,
+    linear-gradient(#15161a, #15161a) 50% 50% / 75% 8% no-repeat,
+    linear-gradient(#15161a, #15161a) 50% 78% / 75% 8% no-repeat,
+    #2f3035;
+  box-shadow: 0 0.05cqw 0.15cqw rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  transition: top 90ms ease-out;
+}
+
+.sb-panel-knob {
+  border-radius: 50%;
+  cursor: ns-resize;
+  touch-action: none;
+}
+
+.sb-panel-knob-passive {
+  cursor: default;
+  pointer-events: none;
+}
+
+/* A drawn faceplate shades its knobs evenly; this is the light on them, from
+   the upper left. It sits still while the knob turns under it. */
+.sb-panel-knob[data-lighting='fixed']::after {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(
+    149deg,
+    rgb(255 255 255 / 0.17) 7.5%,
+    rgb(255 255 255 / 0) 50%,
+    rgb(0 0 0 / 0) 50%,
+    rgb(0 0 0 / 0.34) 92.5%
+  );
+  content: '';
+  pointer-events: none;
+}
+
+.sb-knob-photo,
+.sb-knob-drawn {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  transition: transform 90ms ease-out;
+}
+
+.sb-knob-drawn {
+  background: radial-gradient(circle at 35% 30%, #d8d5cd, #8d8a82 70%, #5d5a54);
+  box-shadow: 0 0.3cqw 0.8cqw rgb(0 0 0 / 0.45);
+}
+
+.sb-knob-pointer {
+  position: absolute;
+  top: 6%;
+  left: 50%;
+  width: 8%;
+  height: 34%;
+  margin-left: -4%;
+  border-radius: 999px;
+  background: var(--panel-ink);
+}
+
+/* Drawn panel, used when no faceplate photo is available. */
+.sb-panel[data-drawn='true'] {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--panel) 92%, #fff), var(--panel));
+  color: var(--panel-ink);
+}
+
+.sb-panel[data-drawn='true'] .sb-panel-well {
+  border-radius: 0.6cqw;
+  background: var(--panel-well);
+}
+
+.sb-panel[data-drawn='true'] .sb-panel-title {
+  top: 6%;
+  right: 4%;
+  font-size: 3cqw;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.sb-panel[data-drawn='true'] .sb-panel-note {
+  top: 6%;
+  left: 3%;
+  max-width: 40%;
+  font-size: 1.25cqw;
+  opacity: 0.7;
+}
+
+.sb-panel[data-drawn='true'] .sb-panel-transport .sb-panel-text {
+  padding: 0 0.3cqw;
+  font-size: 1.05cqw;
+  text-align: center;
+}
+
+.sb-panel[data-drawn='true'] .sb-panel-caption {
+  display: grid;
+  place-items: center;
+  font-size: 1.4cqw;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.sb-panel[data-drawn='true'] .sb-panel-text {
+  display: block;
+  font-size: 1.3cqw;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.sb-panel[data-drawn='true'] .sb-panel-step {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 0.5cqw;
+  color: #111;
+}
+
+.sb-panel[data-drawn='true'] .sb-panel-step .sb-panel-text {
+  font-size: 1.1cqw;
+}
+
+.sb-panel[data-drawn='true'] .sb-panel-key {
+  border-radius: 0.4cqw;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--panel-button) 80%, #fff), var(--panel-button));
+  box-shadow: 0 0.25cqw 0.4cqw rgb(0 0 0 / 0.5);
+  pointer-events: none;
+}
+
+.sb-panel[data-drawn='true'] .sb-panel-voice .sb-panel-text {
+  overflow: hidden;
+  max-width: 100%;
+  font-size: 0.95cqw;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.sb-panel[data-drawn='true'] .sb-panel-voice,
+.sb-panel[data-drawn='true'] .sb-panel-transport {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 0.12cqw solid color-mix(in srgb, var(--panel-ink) 55%, transparent);
+  color: var(--panel-ink);
+}
+
+.sb-panel[data-drawn='true'] .sb-panel-transport {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--panel-button) 80%, #fff), var(--panel-button));
+  color: #111;
+}
+
+.sb-panel[data-drawn='true'] .sb-panel-voice:disabled {
+  opacity: 0.45;
+}
+
+.sb-panel[data-drawn='true'] .sb-panel-voice[aria-checked='true'] {
+  background: var(--panel-ink);
+  color: var(--panel);
+}
+
+/* Touch-sized stand-ins for the faceplate's small controls. Phones only. */
+.sb-panel-touch {
+  display: none;
+}
+
+.sb-panel-strip .sb-segment {
+  min-height: 44px;
+  padding: 0 4px;
+  font-family: var(--font-mono);
+}
+
+.sb-panel-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.sb-panel-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sb-panel-info p {
+  margin: 0;
+}
+
+/* The quiet line under a photographed faceplate: its credit. */
+.sb-panel-meta {
+  margin: 0;
+  color: var(--color-dim);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.sb-panel-meta a {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.sb-panel-pending {
+  color: var(--color-dim);
+  font-size: 13px;
+}
+
+.sb-panel-pending summary {
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sb-panel-pending ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+
+.sb-panel-pending li + li {
+  margin-top: 4px;
+}
+
+/* ---- Small screens ------------------------------------------------------ */
+
+@media (max-width: 680px) {
+  /* The faceplate keeps a usable size and scrolls sideways. */
+  .sb-panel-scroll:not([data-fit='true']) .sb-panel {
+    width: 900px;
+  }
+
+  .sb-panel-touch {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+}

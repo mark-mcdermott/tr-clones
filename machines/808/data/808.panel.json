@@ -1,0 +1,114 @@
+{
+  "format": "boombapbot.panel",
+  "schemaVersion": 1,
+  "id": "808",
+  "name": "808 panel",
+  "faceplate": {"file": "808.svg", "width": 2000, "height": 1190, "original": true},
+  "theme": {"panel": "#2b2c30", "ink": "#f1ebd9", "accent": "#ff5a2a", "button": "#f08a3a", "well": "#8b8883", "led": "#ff3020"},
+  "wells": [
+    [158, 785, 1684, 296]
+  ],
+  "steps": [
+    {"hit": [493.5, 926, 73, 106], "button": [502.0, 932, 56, 96], "led": [528.3, 949.2]},
+    {"hit": [567.7, 926, 73, 106], "button": [576.2, 932, 56, 96], "led": [602.8, 948.6]},
+    {"hit": [641.8, 926, 73, 106], "button": [650.3, 932, 56, 96], "led": [676.1, 949.1]},
+    {"hit": [716.0, 926, 73, 106], "button": [724.5, 932, 56, 96], "led": [751.6, 947.1]},
+    {"hit": [790.1, 926, 73, 106], "button": [798.6, 932, 56, 96], "led": [826.0, 947.2]},
+    {"hit": [864.3, 926, 73, 106], "button": [872.8, 932, 56, 96], "led": [899.0, 947.8]},
+    {"hit": [938.5, 926, 73, 106], "button": [947.0, 932, 56, 96], "led": [972.9, 947.2]},
+    {"hit": [1012.6, 926, 73, 106], "button": [1021.1, 932, 56, 96], "led": [1046.8, 947.9]},
+    {"hit": [1086.8, 926, 73, 106], "button": [1095.3, 932, 56, 96], "led": [1122.1, 947.2]},
+    {"hit": [1160.9, 926, 73, 106], "button": [1169.4, 932, 56, 96], "led": [1195.9, 947.3]},
+    {"hit": [1235.1, 926, 73, 106], "button": [1243.6, 932, 56, 96], "led": [1269.0, 948.7]},
+    {"hit": [1309.3, 926, 73, 106], "button": [1317.8, 932, 56, 96], "led": [1341.9, 948.9]},
+    {"hit": [1383.4, 926, 73, 106], "button": [1391.9, 932, 56, 96], "led": [1416.5, 951.6]},
+    {"hit": [1457.6, 926, 73, 106], "button": [1466.1, 932, 56, 96], "led": [1492.7, 950.1]},
+    {"hit": [1531.7, 926, 73, 106], "button": [1540.2, 932, 56, 96], "led": [1567.4, 951.1]},
+    {"hit": [1605.9, 926, 73, 106], "button": [1614.4, 932, 56, 96], "led": [1641.0, 950.9]}
+  ],
+  "ledRadius": 9,
+  "ledsLitInPhoto": false,
+  "transport": [
+    {"action": "toggle", "label": "START/STOP", "hit": [198, 942, 152, 76]}
+  ],
+  "tempo": {"label": "TEMPO", "cx": 259.5, "cy": 639, "r": 82, "minDeg": -150, "maxDeg": 150, "photoDeg": -79},
+  "fine": {"label": "FINE", "cx": 416, "cy": 688, "r": 28, "photoDeg": 0, "minDeg": -90, "maxDeg": 90},
+  "master": {"label": "MASTER VOLUME", "cx": 1768, "cy": 688, "r": 41, "photoDeg": 60, "minDeg": -120, "maxDeg": 120},
+  "knobs": [
+    {"track": "accent", "param": "level", "cx": 555.75, "cy": 268, "r": 22, "photoDeg": 75, "minDeg": -150, "maxDeg": 150},
+    {"track": "kick", "param": "level", "cx": 667.25, "cy": 268, "r": 22, "photoDeg": 75, "minDeg": -150, "maxDeg": 150},
+    {"track": "snare", "param": "level", "cx": 778.75, "cy": 268, "r": 22, "photoDeg": 75, "minDeg": -150, "maxDeg": 150},
+    {"track": "low_tom", "param": "level", "cx": 890.25, "cy": 268, "r": 22, "photoDeg": 75, "minDeg": -150, "maxDeg": 150},
+    {"track": "mid_tom", "param": "level", "cx": 1001.75, "cy": 268, "r": 22, "photoDeg": 75, "minDeg": -150, "maxDeg": 150},
+    {"track": "high_tom", "param": "level", "cx": 1113.25, "cy": 268, "r": 22, "photoDeg": 75, "minDeg": -150, "maxDeg": 150},
+    {"track": "rim_shot", "param": "level", "cx": 1224.75, "cy": 268, "r": 22, "photoDeg": 75, "minDeg": -150, "maxDeg": 150},
+    {"track": "clap", "param": "level", "cx": 1336.25, "cy": 268, "r": 22, "photoDeg": 75, "minDeg": -150, "maxDeg": 150},
+    {"track": "cowbell", "param": "level", "cx": 1447.75, "cy": 268, "r": 22, "photoDeg": 75, "minDeg": -150, "maxDeg": 150},
+    {"track": "cymbal", "param": "level", "cx": 1559.25, "cy": 268, "r": 22, "photoDeg": 75, "minDeg": -150, "maxDeg": 150},
+    {"track": "open_hat", "param": "level", "cx": 1670.75, "cy": 268, "r": 22, "photoDeg": 75, "minDeg": -150, "maxDeg": 150},
+    {"track": "closed_hat", "param": "level", "cx": 1782.25, "cy": 268, "r": 22, "photoDeg": 75, "minDeg": -150, "maxDeg": 150},
+    {"track": "kick", "param": "tone", "cx": 667.25, "cy": 389, "r": 22, "photoDeg": 0, "minDeg": -150, "maxDeg": 150},
+    {"track": "kick", "param": "decay", "cx": 667.25, "cy": 509, "r": 22, "photoDeg": 0, "minDeg": -150, "maxDeg": 150},
+    {"track": "snare", "param": "tone", "cx": 778.75, "cy": 389, "r": 22, "photoDeg": 0, "minDeg": -150, "maxDeg": 150},
+    {"track": "snare", "param": "snappy", "cx": 778.75, "cy": 509, "r": 22, "photoDeg": 0, "minDeg": -150, "maxDeg": 150},
+    {"track": "low_tom", "param": "tune", "cx": 890.25, "cy": 389, "r": 22, "photoDeg": 0, "minDeg": -150, "maxDeg": 150},
+    {"track": "mid_tom", "param": "tune", "cx": 1001.75, "cy": 389, "r": 22, "photoDeg": 0, "minDeg": -150, "maxDeg": 150},
+    {"track": "high_tom", "param": "tune", "cx": 1113.25, "cy": 389, "r": 22, "photoDeg": 0, "minDeg": -150, "maxDeg": 150},
+    {"track": "cymbal", "param": "tone", "cx": 1559.25, "cy": 389, "r": 22, "photoDeg": 0, "minDeg": -150, "maxDeg": 150},
+    {"track": "cymbal", "param": "decay", "cx": 1559.25, "cy": 509, "r": 22, "photoDeg": 0, "minDeg": -150, "maxDeg": 150},
+    {"track": "open_hat", "param": "decay", "cx": 1670.75, "cy": 509, "r": 22, "photoDeg": 0, "minDeg": -150, "maxDeg": 150}
+  ],
+  "switches": [
+    {"track": "low_tom", "hit": [840.25, 482, 100, 88], "slot": [879.25, 523, 22, 46]},
+    {"track": "mid_tom", "hit": [951.75, 482, 100, 88], "slot": [990.75, 523, 22, 46]},
+    {"track": "high_tom", "hit": [1063.25, 482, 100, 88], "slot": [1102.25, 523, 22, 46]},
+    {"track": "rim_shot", "hit": [1174.75, 482, 100, 88], "slot": [1213.75, 523, 22, 46]},
+    {"track": "clap", "hit": [1286.25, 482, 100, 88], "slot": [1325.25, 523, 22, 46]}
+  ],
+  "modeSelect": {
+    "knob": {"cx": 228, "cy": 320, "r": 40, "photoDeg": -52},
+    "positions": [
+      {"mode": "pattern_clear", "label": "Pattern clear", "deg": -90, "hit": [186, 373, 116, 28]},
+      {"mode": "write_first", "label": "1st part", "deg": -52, "hit": [150, 248, 42, 32]},
+      {"mode": "write_second", "label": "2nd part", "deg": -14, "hit": [195, 232, 42, 32]},
+      {"mode": "manual_play", "label": "Manual play", "deg": 24, "hit": [255, 236, 64, 34]},
+      {"mode": "play", "label": "Play", "deg": 62, "hit": [270, 271, 40, 18]},
+      {"mode": "compose", "label": "Compose", "deg": 100, "hit": [282, 291, 40, 26]}
+    ]
+  },
+  "autoFill": {"knob": {"cx": 410, "cy": 466, "r": 39, "photoDeg": -92}, "hit": [330, 394, 160, 116], "degs": [-92, -55, -18, 18, 55, 92]},
+  "power": {"hit": [182, 112, 84, 66], "rocker": [193, 123, 62, 44]},
+  "clear": {"hit": [212, 407, 44, 44]},
+  "tap": {"hit": [1725, 945, 78, 76]},
+  "preScale": {"hit": [412, 806, 60, 84], "slot": [424, 812, 22, 72]},
+  "basicVariation": {"hit": [225, 808, 98, 66], "slot": [233, 813, 82, 26]},
+  "fillVariation": {"hit": [1725, 809, 76, 60], "slot": [1735, 814, 56, 26]},
+  "lamps": {"firstPart": [435, 951], "secondPart": [435, 1004], "variationA": [246, 887], "variationB": [302, 887], "radius": 5.5},
+  "voiceSelect": {
+    "kind": "rotary",
+    "label": "INSTRUMENT SELECT",
+    "knob": {"cx": 407, "cy": 316, "r": 33, "photoDeg": -75},
+    "positions": [
+      {"label": "AC", "track": "accent", "deg": -165, "hit": [372, 374, 33, 18]},
+      {"label": "BD", "track": "kick", "deg": -135, "hit": [338, 349, 33, 18]},
+      {"label": "SD", "track": "snare", "deg": -105, "hit": [327, 324, 33, 18]},
+      {"label": "LT", "track": "low_tom", "deg": -75, "hit": [327, 296, 32, 18]},
+      {"label": "MT", "track": "mid_tom", "deg": -45, "hit": [338, 272, 33, 18]},
+      {"label": "HT", "track": "high_tom", "deg": -15, "hit": [371, 248, 33, 18]},
+      {"label": "RS", "track": "rim_shot", "deg": 15, "hit": [421, 248, 33, 18]},
+      {"label": "CP", "track": "clap", "deg": 45, "hit": [456, 272, 35, 18]},
+      {"label": "CB", "track": "cowbell", "deg": 75, "hit": [468, 296, 32, 18]},
+      {"label": "CY", "track": "cymbal", "deg": 105, "hit": [468, 324, 32, 18]},
+      {"label": "OH", "track": "open_hat", "deg": 135, "hit": [457, 349, 34, 18]},
+      {"label": "CH", "track": "closed_hat", "deg": 165, "hit": [421, 374, 34, 18]}
+    ]
+  },
+  "pending": [
+    "CLEAR is a latch here: press it, then a step button, to set the last step. On the machine it is held down. Whether CLEAR also resets a rhythm's pre-scale is unverified; here it does not.",
+    "Whether a tapped fill-in counts as a measure of the automatic fill-in, and whether the first-beat rule applies outside manual play and compose, is not in the manual. Here a tapped fill-in counts and the rule is theirs alone.",
+    "Composing over a written track: here a rhythm chosen on the way replaces every measure from there to the end, a tapped fill-in replaces one, and the machine stops at the end of the track. The manual describes this only loosely.",
+    "A rhythm track plays on into the next track only when it is full, as the manual implies. Turning the mode selector into or out of play or compose stops the machine here.",
+    "What each knob does to the sound, and how far the level, accent and volume knobs reach, is a model made by ear.",
+    "The lamps follow the manual's description of each mode. What the hardware shows in the cases the manual leaves out is unverified."
+  ]
+}

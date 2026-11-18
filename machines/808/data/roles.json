@@ -1,0 +1,22 @@
+{
+  "format": "boombapbot.roles",
+  "schemaVersion": 1,
+  "roles": [
+    { "id": "kick", "index": 0, "name": "Bass Drum", "short": "BD", "gmNote": 36 },
+    { "id": "snare", "index": 1, "name": "Snare Drum", "short": "SD", "gmNote": 38 },
+    { "id": "closed_hat", "index": 2, "name": "Closed Hi-Hat", "short": "CH", "gmNote": 42 },
+    { "id": "open_hat", "index": 3, "name": "Open Hi-Hat", "short": "OH", "gmNote": 46 },
+    { "id": "low_tom", "index": 4, "name": "Low Tom", "short": "LT", "gmNote": 45 },
+    { "id": "high_tom", "index": 5, "name": "Hi Tom", "short": "HT", "gmNote": 50 },
+    { "id": "clap", "index": 6, "name": "Hand Clap", "short": "CP", "gmNote": 39 },
+    { "id": "cymbal", "index": 7, "name": "Cymbal", "short": "CY", "gmNote": 49 },
+    { "id": "mid_tom", "index": 8, "name": "Mid Tom", "short": "MT", "gmNote": 47 },
+    { "id": "rim_shot", "index": 9, "name": "Rim Shot", "short": "RS", "gmNote": 37 },
+    { "id": "cowbell", "index": 10, "name": "Cowbell", "short": "CB", "gmNote": 56 },
+    { "id": "low_conga", "index": 11, "name": "Low Conga", "short": "LC", "gmNote": 64 },
+    { "id": "mid_conga", "index": 12, "name": "Mid Conga", "short": "MC", "gmNote": 63 },
+    { "id": "high_conga", "index": 13, "name": "Hi Conga", "short": "HC", "gmNote": 62 },
+    { "id": "claves", "index": 14, "name": "Claves", "short": "CL", "gmNote": 75 },
+    { "id": "maracas", "index": 15, "name": "Maracas", "short": "MA", "gmNote": 70 }
+  ]
+}
