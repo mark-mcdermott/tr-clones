@@ -16,12 +16,24 @@ repository exists.
   and changes none of them.
 - **`machines/808/`** is the 808 as a machine: its project document, its
   voices for the engine, its panel and its art, what its controls do, and its
-  tests. A machine is one folder; the next one goes beside it.
+  tests. Its `engine/` folder also holds its render tool, which plays an 808
+  project through the native engine, and the engine tests that are about
+  its sounds and data files. A machine is one folder; the next one goes
+  beside it.
 - **`apps/host/`** is one page that mounts the editor with a machine. There
   is no server behind it, so there are no accounts and nothing is saved
   anywhere but in the browser.
-- **`scripts/`** builds the engine for the machines here and puts it where
-  the page can serve it.
+- **`e2e/`** is the browser tests: what every machine's tests share, and a
+  folder of tests for each machine.
+- **`plugins/vst3/`** is a JUCE VST3 instrument that links the same engine
+  with the 808's voices. It is a compile spike, not a product; its own
+  README says what was and was not verified.
+- **`retired/`** holds things kept for machines that are not built yet:
+  generated sample kits for the 606, 707 and 909 with their generator, and
+  debranded Creative Commons photographs of four machines with their
+  credits. Nothing loads or ships them.
+- **`scripts/`** builds the engine for the machines here, puts it where the
+  page can serve it, and measures its load (`pnpm bench`).
 
 ## Getting it running
 
@@ -51,13 +63,30 @@ pnpm dev             # http://localhost:4321
 
 ## Checks
 
+In the order CI runs them:
+
 ```bash
-pnpm build:engine    # builds and runs the engine's test suites
+pnpm kits:check        # the retired kits match their generator
+pnpm faceplates:check  # the 808's drawn faceplate matches its generator
+pnpm build:engine      # builds the engine and runs its test suites
+pnpm build:wasm
 pnpm typecheck
-pnpm test:unit       # needs build:engine and build:wasm first
-pnpm faceplates:check
-pnpm build           # the page, into apps/host/dist
+pnpm test:unit         # needs build:engine and build:wasm first
+pnpm build             # the page, into apps/host/dist
+pnpm test:e2e          # Playwright, against that build
 ```
+
+`pnpm test:e2e` needs `pnpm exec playwright install chromium` once. The VST3
+spike is built apart from all of this:
+
+```bash
+cmake -S plugins/vst3 -B build/vst3 -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build/vst3
+ctest --test-dir build/vst3 --output-on-failure
+```
+
+`.github/workflows/ci.yml` runs the whole list on every push and pull
+request, with the engine also built by Clang and under the sanitizers.
 
 ## Moving the core forward
 
@@ -75,14 +104,14 @@ them.
 
 ## What is not here yet
 
-- The 808's browser tests, which are still in boombapbot.
-- The VST3 spike and the retired kits and photographs of the 606, 707 and
-  909, which are also still in boombapbot.
-- Any machine but the 808.
+Any machine but the 808.
 
 ## What has and has not been checked
 
-The 808 here builds, passes the engine's test suites and its own unit tests,
-renders the same audio and MIDI as it does in boombapbot, and plays in
-Chromium from `pnpm build`. It has not been run in Safari or Firefox or on a
-phone from this repository, and there is no CI here yet.
+Run on macOS on Apple silicon: the 808 builds and passes the engine's test
+suites, its own unit tests and its browser tests in headless Chromium, and
+it renders the same audio and MIDI as it did in boombapbot, byte for byte.
+The VST3 spike builds there and its self-test passes.
+
+Not checked: Safari, Firefox or a phone from this repository; the VST3 in
+any host; and the CI workflow, which has not run on GitHub yet.
