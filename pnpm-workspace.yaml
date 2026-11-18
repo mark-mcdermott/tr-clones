@@ -1,8 +1,10 @@
 # The core's shared packages come from the boombapbot checkout in core/. Its
-# own machines and its site are not part of this workspace.
+# own machines and its site are not part of this workspace. packages/ is what
+# the machines here share with each other.
 packages:
   - core/packages/contracts
   - core/packages/editor
+  - packages/*
   - machines/*
   - apps/*
 onlyBuiltDependencies:

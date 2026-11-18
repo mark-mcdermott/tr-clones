@@ -1,4 +1,17 @@
-import { useRef, useState, type CSSProperties } from 'react';
+import { useRef, useState } from 'react';
+import {
+  DialHandle,
+  FaceplateCreditLine,
+  Knob,
+  Lamp,
+  PanelPending,
+  PowerRocker,
+  pressHandlers,
+  PanelStage,
+  PassiveKnob,
+  box,
+  useFaceplatePhoto,
+} from '@tr-clones/panel';
 import {
   BASIC_RHYTHMS,
   KNOB_PARAM_LABELS,
@@ -24,69 +37,21 @@ import {
   type PanelSwitch,
 } from '../document';
 import { trackLabel } from '../engine';
-import { Segmented, useAssetManifest, useKnob } from '@boombapbot/editor';
+import { Segmented } from '@boombapbot/editor';
 import { editTarget } from '../session';
 import { useEditorState, useRuntime } from './context';
 import {
   AutoFillSelector,
   ClearButton,
   ModeSelector,
-  PowerSwitch,
   PreScaleSwitch,
   StatusLamps,
   TapButton,
   VariationSwitches,
   clears,
   rhythmName,
-  tapHandlers,
   taps,
 } from './PanelControls';
-import { DialHandle, KnobFace, PassiveKnob, box, circle, knobLighting } from './panelGeometry';
-
-interface KnobProps {
-  panel: PanelManifest;
-  photo: string | null;
-  geometry: { cx: number; cy: number; r: number; photoDeg: number; minDeg: number; maxDeg: number };
-  label: string;
-  testId: string;
-  value: number;
-  min: number;
-  max: number;
-  /** Change for one arrow key. Page Up and Page Down move ten times as far. */
-  step: number;
-  /** Change for each pixel dragged upwards. */
-  perPixel: number;
-  valueText?: string;
-  onChange(value: number): void;
-}
-
-/** A knob on the faceplate: drag up and down, or use the arrow keys. */
-function Knob(props: KnobProps) {
-  const { panel, photo, geometry, value, min, max } = props;
-  const knob = useKnob(props);
-  const turn = (value - min) / (max - min);
-  const deg = geometry.minDeg + turn * (geometry.maxDeg - geometry.minDeg);
-
-  return (
-    <div
-      className="sb-panel-knob"
-      style={circle(panel, geometry.cx, geometry.cy, geometry.r)}
-      data-testid={props.testId}
-      data-lighting={knobLighting(panel, photo)}
-      {...knob}
-    >
-      <KnobFace
-        panel={panel}
-        photo={photo}
-        cx={geometry.cx}
-        cy={geometry.cy}
-        r={geometry.r}
-        photoDeg={geometry.photoDeg}
-        deg={deg}
-      />
-    </div>
-  );
-}
 
 interface FaceplateProps {
   panel: PanelManifest;
@@ -239,15 +204,11 @@ export function HardwarePanel() {
   const playingRhythm = useEditorState((state) => (state.currentPattern < 0 ? -1 : state.currentPattern >> 1));
   const selector = useEditorState((state) => state.project.panel.selector);
   const trackLength = useEditorState((state) => composition(state.project.rhythmTracks, state.project.panel.selector).length);
-  const manifest = useAssetManifest();
+  const { photo, onPhotoError } = useFaceplatePhoto();
   const [fit, setFit] = useState(false);
-  // An image that fails to load falls back to the drawn panel.
-  const [failedPhoto, setFailedPhoto] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
   const panel = PANEL;
-  const photoUrl = manifest?.faceplate ? runtime.assetUrl(manifest.faceplate) : null;
-  const photo = photoUrl && photoUrl !== failedPhoto ? photoUrl : null;
   const trackName = useEditorState((state) => trackLabel(target.track, state.project.sound));
   const row = rhythm[target.variation][target.track];
   const select = panel.voiceSelect;
@@ -288,186 +249,145 @@ export function HardwarePanel() {
 
   return (
     <section className="sb-hardware" aria-label={`${panel.name} drum machine`} data-testid="hardware">
-      <div className="sb-panel-scroll" data-fit={fit}>
-        <div
-          ref={panelRef}
-          className="sb-panel"
-          data-drawn={!photo}
-          data-testid="panel"
-          data-photo={photo ? 'photo' : 'drawn'}
-          data-power={power ? 'on' : 'off'}
-          style={
-            {
-              aspectRatio: `${panel.faceplate.width} / ${panel.faceplate.height}`,
-              '--panel': panel.theme.panel,
-              '--panel-ink': panel.theme.ink,
-              '--panel-accent': panel.theme.accent,
-              '--panel-button': panel.theme.button,
-              '--panel-well': panel.theme.well,
-              '--panel-led': panel.theme.led,
-            } as CSSProperties
-          }
-        >
-          {photo ? (
-            <img
-              className="sb-panel-photo"
-              src={photo}
-              alt=""
-              draggable={false}
-              onError={() => setFailedPhoto(photo)}
-            />
-          ) : (
+      <PanelStage panel={panel} photo={photo} onPhotoError={onPhotoError} power={power} fit={fit} ref={panelRef}>
+        {!photo
+          ? panel.steps.map((step, index) => (
+              <span key={index} className="sb-panel-key" aria-hidden="true" style={box(panel, step.button)} />
+            ))
+          : null}
+
+        <PowerRocker panel={panel} hit={panel.power.hit} rocker={panel.power.rocker} />
+        {/* With the power off nothing else on the machine answers. */}
+        <div className="sb-panel-controls" inert={!power}>
+          <TempoKnob panel={panel} photo={photo} />
+          <FineKnob panel={panel} photo={photo} />
+          <MasterKnob panel={panel} photo={photo} />
+          {panel.knobs.map((knob) => (
+            <ColumnKnob key={`${knob.track}-${knob.param}`} panel={panel} photo={photo} knob={knob} />
+          ))}
+          {panel.switches.map((entry) => (
+            <VoiceSwitch key={entry.track} panel={panel} entry={entry} />
+          ))}
+          {!photo ? (
+            <span
+              className="sb-panel-caption"
+              style={box(panel, [panel.tempo.cx - 60, panel.tempo.cy - panel.tempo.r - 26, 120, 18])}
+            >
+              {panel.tempo.label}
+            </span>
+          ) : null}
+
+          {select.knob ? (
             <>
-              {panel.wells.map((well, i) => (
-                <span key={i} className="sb-panel-well" style={box(panel, well)} />
-              ))}
-              <span className="sb-panel-title">{panel.name}</span>
-              <span className="sb-panel-note">Drawn stand-in. This build has no faceplate image.</span>
-            </>
-          )}
-
-          {!photo
-            ? panel.steps.map((step, index) => (
-                <span key={index} className="sb-panel-key" aria-hidden="true" style={box(panel, step.button)} />
-              ))
-            : null}
-
-          <PowerSwitch panel={panel} />
-          {/* With the power off nothing else on the machine answers. */}
-          <div className="sb-panel-controls" inert={!power}>
-            <TempoKnob panel={panel} photo={photo} />
-            <FineKnob panel={panel} photo={photo} />
-            <MasterKnob panel={panel} photo={photo} />
-            {panel.knobs.map((knob) => (
-              <ColumnKnob key={`${knob.track}-${knob.param}`} panel={panel} photo={photo} knob={knob} />
-            ))}
-            {panel.switches.map((entry) => (
-              <VoiceSwitch key={entry.track} panel={panel} entry={entry} />
-            ))}
-            {!photo ? (
-              <span
-                className="sb-panel-caption"
-                style={box(panel, [panel.tempo.cx - 60, panel.tempo.cy - panel.tempo.r - 26, 120, 18])}
-              >
-                {panel.tempo.label}
-              </span>
-            ) : null}
-
-            {select.knob ? (
-              <>
-                <PassiveKnob panel={panel} photo={photo} knob={select.knob} deg={activePosition?.deg ?? 0} />
-                <DialHandle
-                  panel={panel}
-                  knob={select.knob}
-                  degs={select.positions.map((position) => position.deg ?? 0)}
-                  testId="panel-dial-voice"
-                  onPick={(index) => {
-                    const picked = select.positions[index]!.track;
-                    if (picked !== target.track) selectTrack(picked);
-                  }}
-                />
-              </>
-            ) : null}
-            <ModeSelector panel={panel} photo={photo} />
-            <AutoFillSelector panel={panel} photo={photo} />
-            <ClearButton panel={panel} />
-            <PreScaleSwitch panel={panel} />
-            <VariationSwitches panel={panel} />
-            <StatusLamps panel={panel} dim={!photo || panel.ledsLitInPhoto} />
-            <TapButton panel={panel} />
-
-            <div className="sb-panel-layer" role="radiogroup" aria-label={tracks ? 'Rhythm track' : select.label || 'Instrument'}>
-              {select.positions.map((position, index) => (
-                <button
-                  key={position.track}
-                  type="button"
-                  role="radio"
-                  className="sb-panel-voice"
-                  style={box(panel, position.hit)}
-                  aria-checked={position.track === target.track}
-                  aria-label={tracks ? `Rhythm track ${index + 1}` : `${position.label}, ${getTrack(position.track).label}`}
-                  data-testid={`panel-voice-${position.track}`}
-                  onClick={() => selectTrack(position.track)}
-                >
-                  <span className="sb-panel-text">{position.label}</span>
-                </button>
-              ))}
-            </div>
-
-            {panel.transport.map((control) => (
-              <button
-                key={control.action}
-                type="button"
-                className="sb-panel-transport"
-                style={box(panel, control.hit)}
-                data-testid={`panel-${control.action}`}
-                aria-label={control.label}
-                aria-pressed={control.action === 'stop' ? undefined : playing}
-                onClick={() => {
-                  if (control.action === 'toggle') void runtime.togglePlay();
-                  else if (control.action === 'start') void runtime.play();
-                  else runtime.stop();
+              <PassiveKnob panel={panel} photo={photo} knob={select.knob} deg={activePosition?.deg ?? 0} />
+              <DialHandle
+                panel={panel}
+                knob={select.knob}
+                degs={select.positions.map((position) => position.deg ?? 0)}
+                testId="panel-dial-voice"
+                onPick={(index) => {
+                  const picked = select.positions[index]!.track;
+                  if (picked !== target.track) selectTrack(picked);
                 }}
+              />
+            </>
+          ) : null}
+          <ModeSelector panel={panel} photo={photo} />
+          <AutoFillSelector panel={panel} photo={photo} />
+          <ClearButton panel={panel} />
+          <PreScaleSwitch panel={panel} />
+          <VariationSwitches panel={panel} />
+          <StatusLamps panel={panel} dim={!photo || panel.ledsLitInPhoto} />
+          <TapButton panel={panel} />
+
+          <div className="sb-panel-layer" role="radiogroup" aria-label={tracks ? 'Rhythm track' : select.label || 'Instrument'}>
+            {select.positions.map((position, index) => (
+              <button
+                key={position.track}
+                type="button"
+                role="radio"
+                className="sb-panel-voice"
+                style={box(panel, position.hit)}
+                aria-checked={position.track === target.track}
+                aria-label={tracks ? `Rhythm track ${index + 1}` : `${position.label}, ${getTrack(position.track).label}`}
+                data-testid={`panel-voice-${position.track}`}
+                onClick={() => selectTrack(position.track)}
               >
-                <span className="sb-panel-text">{control.label}</span>
+                <span className="sb-panel-text">{position.label}</span>
               </button>
             ))}
-
-            <div
-              className="sb-panel-layer"
-              role="group"
-              aria-label={writing ? `${trackName} steps` : 'Rhythms'}
-            >
-              {panel.steps.map((step, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  className="sb-panel-step"
-                  style={box(panel, step.hit)}
-                  data-panel-step={index}
-                  data-on={lit(index)}
-                  aria-pressed={lit(index)}
-                  aria-label={stepLabel(index)}
-                  onClick={() => {
-                    const press = session.pressStep(index);
-                    if (press.kind === 'step' && press.on && !store.getState().playing) {
-                      runtime.session.auditionIfRunning(target.track);
-                    }
-                  }}
-                  onKeyDown={(event) => {
-                    if (event.key === 'ArrowRight') {
-                      event.preventDefault();
-                      focusStep((index + 1) % PART_STEPS);
-                    } else if (event.key === 'ArrowLeft') {
-                      event.preventDefault();
-                      focusStep((index - 1 + PART_STEPS) % PART_STEPS);
-                    }
-                  }}
-                >
-                  <span className="sb-panel-text">{index < BASIC_RHYTHMS ? index + 1 : index + 1 - BASIC_RHYTHMS}</span>
-                </button>
-              ))}
-            </div>
-
-            {panel.steps.map((step, index) => {
-              const [x, y] = step.led;
-              return (
-                <span
-                  key={index}
-                  className="sb-panel-led"
-                  aria-hidden="true"
-                  data-panel-lamp={index}
-                  data-on={lit(index)}
-                  data-now={running(index)}
-                  data-flash={flashing(index)}
-                  data-dim={!photo || panel.ledsLitInPhoto}
-                  style={circle(panel, x, y, panel.ledRadius)}
-                />
-              );
-            })}
           </div>
+
+          {panel.transport.map((control) => (
+            <button
+              key={control.action}
+              type="button"
+              className="sb-panel-transport"
+              style={box(panel, control.hit)}
+              data-testid={`panel-${control.action}`}
+              aria-label={control.label}
+              aria-pressed={control.action === 'stop' ? undefined : playing}
+              onClick={() => {
+                if (control.action === 'toggle') void runtime.togglePlay();
+                else if (control.action === 'start') void runtime.play();
+                else runtime.stop();
+              }}
+            >
+              <span className="sb-panel-text">{control.label}</span>
+            </button>
+          ))}
+
+          <div
+            className="sb-panel-layer"
+            role="group"
+            aria-label={writing ? `${trackName} steps` : 'Rhythms'}
+          >
+            {panel.steps.map((step, index) => (
+              <button
+                key={index}
+                type="button"
+                className="sb-panel-step"
+                style={box(panel, step.hit)}
+                data-panel-step={index}
+                data-on={lit(index)}
+                aria-pressed={lit(index)}
+                aria-label={stepLabel(index)}
+                onClick={() => {
+                  const press = session.pressStep(index);
+                  if (press.kind === 'step' && press.on && !store.getState().playing) {
+                    runtime.session.auditionIfRunning(target.track);
+                  }
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'ArrowRight') {
+                    event.preventDefault();
+                    focusStep((index + 1) % PART_STEPS);
+                  } else if (event.key === 'ArrowLeft') {
+                    event.preventDefault();
+                    focusStep((index - 1 + PART_STEPS) % PART_STEPS);
+                  }
+                }}
+              >
+                <span className="sb-panel-text">{index < BASIC_RHYTHMS ? index + 1 : index + 1 - BASIC_RHYTHMS}</span>
+              </button>
+            ))}
+          </div>
+
+          {panel.steps.map((step, index) => (
+            <Lamp
+              key={index}
+              panel={panel}
+              at={step.led}
+              radius={panel.ledRadius}
+              step={index}
+              on={lit(index)}
+              now={running(index)}
+              flash={flashing(index)}
+              dim={!photo || panel.ledsLitInPhoto}
+            />
+          ))}
         </div>
-      </div>
+      </PanelStage>
 
       {/* On a phone the faceplate's own selector is too small to tap. */}
       <div className="sb-panel-touch" inert={!power}>
@@ -531,7 +451,7 @@ export function HardwarePanel() {
               data-testid="strip-tap"
               aria-pressed={isPerformMode(mode) ? fillArmed : undefined}
               disabled={!taps(mode)}
-              {...tapHandlers(runtime)}
+              {...pressHandlers(() => runtime.session.tap())}
             >
               {isPerformMode(mode) ? 'Fill in' : 'Tap'}
             </button>
@@ -542,35 +462,14 @@ export function HardwarePanel() {
         </div>
       </div>
 
-      {photo && panel.faceplate.credit ? (
-        <p className="sb-panel-meta" data-testid="panel-credit">
-          Faceplate {panel.faceplate.credit.changes ? 'adapted from' : 'photo:'}{' '}
-          <a href={panel.faceplate.credit.source} target="_blank" rel="noreferrer noopener">
-            “{panel.faceplate.credit.title}”
-          </a>{' '}
-          by {panel.faceplate.credit.author}, licensed{' '}
-          <a href={panel.faceplate.credit.licenceUrl} target="_blank" rel="noreferrer noopener">
-            {panel.faceplate.credit.licence}
-          </a>
-          .{panel.faceplate.credit.changes ? ` ${panel.faceplate.credit.changes}` : ''}
-        </p>
-      ) : null}
+      {photo && panel.faceplate.credit ? <FaceplateCreditLine credit={panel.faceplate.credit} /> : null}
     </section>
   );
 }
 
 /** What the panel does not model yet. Shown in settings. */
 export function PanelNotes() {
-  return (
-    <details className="sb-panel-pending" data-testid="panel-pending">
-      <summary>Prototype: what still needs checking against the hardware</summary>
-      <ul>
-        {PANEL.pending.map((item) => (
-          <li key={item}>{item}</li>
-        ))}
-      </ul>
-    </details>
-  );
+  return <PanelPending items={PANEL.pending} />;
 }
 
 /** The modes as the phone strip names them, in selector order. */

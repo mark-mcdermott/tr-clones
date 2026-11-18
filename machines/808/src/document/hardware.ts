@@ -1,4 +1,12 @@
 import { z } from 'zod';
+import {
+  faceplateSchema,
+  knobSchema,
+  pointSchema,
+  rectSchema,
+  sweepKnobSchema,
+  themeSchema,
+} from '@tr-clones/panel/schema';
 import panel808 from '../../data/808.panel.json';
 import { KNOB_PARAMS, PART_STEPS, SWITCHED_IDS, TRACK_IDS, getTrack } from './machine';
 import { AUTO_FILLS, MODES } from './project';
@@ -9,28 +17,6 @@ import { AUTO_FILLS, MODES } from './project';
  * image, so they scale with it. The manifest carries no pixels itself; the
  * photo is supplied separately and the panel can be drawn without it.
  */
-
-/** [x, y, width, height] in faceplate pixels. */
-const rectSchema = z.tuple([z.number(), z.number(), z.number().positive(), z.number().positive()]);
-const pointSchema = z.tuple([z.number(), z.number()]);
-const colourSchema = z.string().regex(/^#[0-9a-f]{6}$/i);
-
-const knobSchema = z.object({
-  cx: z.number(),
-  cy: z.number(),
-  /** Radius of the part that turns. */
-  r: z.number().positive(),
-  /** Pointer angle in the photo, in degrees clockwise from straight up. */
-  photoDeg: z.number(),
-});
-
-/** A knob with a pointer that sweeps between two angles. */
-const sweepKnobSchema = knobSchema.extend({
-  label: z.string(),
-  /** Pointer angles with the knob fully left and fully right. */
-  minDeg: z.number(),
-  maxDeg: z.number(),
-});
 
 const voicePositionSchema = z.object({
   label: z.string().min(1).max(12),
@@ -46,46 +32,9 @@ export const panelManifestSchema = z.object({
   schemaVersion: z.literal(1),
   id: z.literal('808'),
   name: z.string().min(1).max(40),
-  faceplate: z.object({
-    /** File name in the machine's art folder, or in misc/assets during development. */
-    file: z.string().regex(/^[a-z0-9_-]+\.(jpg|png|webp|svg)$/),
-    /**
-     * Size of the coordinate space every rectangle below is measured in. A
-     * photo of the same framing at another resolution works unchanged.
-     */
-    width: z.number().positive(),
-    height: z.number().positive(),
-    /**
-     * True for artwork drawn for boombapbot by art/draw-faceplate.mjs. It
-     * needs no credit; any other image needs one before it may ship.
-     */
-    original: z.boolean().optional(),
-    /**
-     * Who made the photograph and under what licence. Required before a
-     * photograph may ship: the licences need the credit shown with the image.
-     */
-    credit: z
-      .object({
-        /** Title of the original work, as its source names it. */
-        title: z.string().min(1).max(120),
-        author: z.string().min(1).max(120),
-        source: z.url({ protocol: /^https$/ }),
-        licence: z.string().min(1).max(40),
-        licenceUrl: z.url({ protocol: /^https$/ }),
-        /** What was changed from the original, when the image is an adaptation. */
-        changes: z.string().min(1).max(200).optional(),
-      })
-      .optional(),
-  }),
+  faceplate: faceplateSchema,
   /** Colours for the drawn panel used when no photo is available. */
-  theme: z.object({
-    panel: colourSchema,
-    ink: colourSchema,
-    accent: colourSchema,
-    button: colourSchema,
-    well: colourSchema,
-    led: colourSchema,
-  }),
+  theme: themeSchema,
   /** Recessed areas of the drawn panel. */
   wells: z.array(rectSchema),
   steps: z
@@ -169,8 +118,6 @@ export const panelManifestSchema = z.object({
 });
 
 export type PanelManifest = z.infer<typeof panelManifestSchema>;
-export type PanelRect = z.infer<typeof rectSchema>;
-export type FaceplateCredit = NonNullable<PanelManifest['faceplate']['credit']>;
 
 export type PanelKnob = PanelManifest['knobs'][number];
 export type PanelSwitch = PanelManifest['switches'][number];

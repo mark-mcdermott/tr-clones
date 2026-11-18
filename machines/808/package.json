@@ -8,9 +8,13 @@
     ".": "./src/index.tsx",
     "./document": "./src/document/index.ts"
   },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@boombapbot/contracts": "workspace:*",
     "@boombapbot/editor": "workspace:*",
+    "@tr-clones/panel": "workspace:*",
     "zod": "4.6.7"
   },
   "peerDependencies": {
